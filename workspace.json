@@ -1,4 +1,9 @@
 {
   "version": 2,
-  "projects": {}
+  "projects": {
+    "customer-portal": "apps/customer-portal",
+    "customer-portal-e2e": "apps/customer-portal-e2e",
+    "ngx-cdk-table": "libs/ngx-cdk-table"
+  },
+  "$schema": "./node_modules/nx/schemas/workspace-schema.json"
 }

@@ -1,0 +1,196 @@
+<ng-template #table>
+  <div class="table-auto-size">
+    <table
+      cdk-table
+      matSort
+      [dataSource]="viewDataSource"
+      (matSortChange)="sortingData($event, viewDataSource)"
+      aria-describedby="table-description"
+    >
+      <!-- Colunas -->
+      <ng-container
+        *ngFor="let columnOption of columnOptions"
+        [cdkColumnDef]="getCdkColumnDef(columnOption)"
+      >
+        <!-- Criação das Células de cabeçalho -->
+        <th
+          cdk-header-cell
+          mat-sort-header
+          [disabled]="columnOption.disabledSorting ?? true"
+          *cdkHeaderCellDef
+        >
+          {{ columnOption.headerTitle }}
+        </th>
+
+        <!-- Célula com pipe -->
+
+        <ng-container *ngIf="columnOption.pipe; else tableCellTemplate">
+          <td
+            cdk-cell
+            *cdkCellDef="let element"
+            [ngClass]="
+              columnOption?.setColumnClassFn &&
+              columnOption?.setColumnClassFn(element)
+            "
+          >
+            <!-- Abreviação células com conteúdo muito grande -->
+            <span gloveWizardAutoAbbrev class="text-overflow">
+              <span class="text">
+                {{
+                  element[getProperty(columnOption)]
+                    | genericPipe: columnOption.pipe.type:columnOption.pipe.args
+                }}
+              </span>
+            </span>
+          </td>
+        </ng-container>
+
+        <!-- Criação das Células  -->
+
+        <ng-template #tableCellTemplate>
+          <!-- Célula Comum -->
+          <ng-container *ngIf="!columnOption.formColumn">
+            <td
+              cdk-cell
+              *cdkCellDef="let element"
+              [ngClass]="
+                columnOption?.setColumnClassFn &&
+                columnOption?.setColumnClassFn(element)
+              "
+            >
+              <!-- Abreviação células com conteúdo muito grande -->
+              <span gloveWizardAutoAbbrev class="text-overflow">
+                <span class="text">
+                  {{ element[getProperty(columnOption)] }}
+                </span>
+              </span>
+            </td>
+          </ng-container>
+
+          <!-- Célula com Formulário -->
+          <ng-container *ngIf="columnOption.formColumn">
+            <td
+              cdk-cell
+              *cdkCellDef="let element"
+              [ngClass]="
+                columnOption?.setColumnClassFn &&
+                columnOption?.setColumnClassFn(element)
+              "
+            >
+              <!-- Tipos de Formulários -->
+
+              <ng-container
+                *ngIf="
+                  columnOption.formColumn.type !== 'custom';
+                  else customInput
+                "
+              >
+                <div
+                  viewContainerRef
+                  #defaultInputViewContainerRef="viewContainerRef"
+                >
+                  <div
+                    class="default-component"
+                    *ngIf="
+                      createInput(
+                        defaultInputViewContainerRef.viewContainerRef,
+                        element,
+                        columnOption
+                      )
+                    "
+                  ></div>
+                </div>
+              </ng-container>
+
+              <!-- Formulário custom -->
+
+              <ng-template #customInput>
+                <div
+                  viewContainerRef
+                  #customInputViewContainerRef="viewContainerRef"
+                >
+                  <div
+                    class="component"
+                    *ngIf="
+                      createInput(
+                        customInputViewContainerRef.viewContainerRef,
+                        element,
+                        columnOption
+                      )
+                    "
+                  ></div>
+                </div>
+              </ng-template>
+
+              <!-- Fim Formulário custom -->
+            </td>
+
+            <!-- Fim Célula com Formulário -->
+          </ng-container>
+          <!-- Fim Célula  -->
+        </ng-template>
+        <!-- Fim Coluna -->
+      </ng-container>
+
+      <!-- Célula de linha -->
+
+      <tr cdk-row *cdkRowDef="let element; columns: displayedColumns"></tr>
+
+      <!-- Célula de rodapé -->
+      <tr
+        cdk-header-row
+        *cdkHeaderRowDef="
+          displayedColumns;
+          sticky: tableOptions?.floatOptions &&
+            tableOptions?.floatOptions?.hasHeader
+        "
+      ></tr>
+    </table>
+  </div>
+</ng-template>
+
+<ng-container
+  *ngIf="tableOptions.paginatorProperties as paginatorOptions; else table"
+>
+  <!-- Paginação utilizando o MatPaginator -->
+  <ng-container *ngIf="isMatPaginator(paginatorOptions); else ngxPaginator">
+    <!-- Container que renderiza a tabela -->
+    <ng-container *ngTemplateOutlet="table"></ng-container>
+
+    <mat-paginator
+      (page)="pageChangeEvent($event, tableOptions.paginatorProperties)"
+      [pageSizeOptions]="paginatorOptions.pageSizeOptions"
+      [pageSize]="paginatorOptions.pageSize"
+    ></mat-paginator>
+  </ng-container>
+
+  <ng-template #ngxPaginator>
+    <!-- Paginação utilizando o NgxMatPaginator -->
+    <ng-container *ngIf="isNgxPaginator(tableOptions.paginatorProperties)">
+      <!-- Container que renderiza a tabela -->
+      <ng-container *ngTemplateOutlet="table"></ng-container>
+      <!-- Container que os botões de paginas  -->
+      <ng-container
+        *ngFor="
+          let item of originalDataSource
+            | paginate
+              : {
+                  itemsPerPage: tableOptions.paginatorProperties.itemsPerPage,
+                  currentPage: tableOptions.paginatorProperties.currentPage,
+                  totalItems: tableOptions.paginatorProperties.totalItems
+                }
+        "
+      ></ng-container>
+      <pagination-controls
+        [responsive]="true"
+        [maxSize]="tableOptions.paginatorProperties.maxSize"
+        (pageChange)="pageChangeEvent($event, tableOptions.paginatorProperties)"
+        [previousLabel]="
+          tableOptions.paginatorProperties.previousLabel ?? 'Anterior'
+        "
+        [nextLabel]="tableOptions.paginatorProperties.nextLabel ?? 'Proxima'"
+      >
+      </pagination-controls>
+    </ng-container>
+  </ng-template>
+</ng-container>

@@ -1,20 +1,26 @@
 {
-  "compileOnSave": false,
+  "compileOnSave": true,
+  "angularCompilerOptions": {
+    "disableTypeScriptVersionCheck": true
+  },
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
     "declaration": false,
     "moduleResolution": "node",
+    "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "lib": ["es2017", "dom"],
+    "lib": ["es2017", "es2021", "dom"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "paths": {
+      "@glove-wizard/ngx-cdk-table": ["libs/ngx-cdk-table/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }

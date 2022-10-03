@@ -1,0 +1,18 @@
+<mat-form-field
+  *ngIf="defaultInputColumns"
+  appearance="outline"
+  [floatLabel]="defaultInputColumns.label?.floatLabel ?? 'always'"
+>
+  <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
+  <mat-select
+    [formControl]="control"
+    [placeholder]="defaultInputColumns.placeholder ?? ''"
+  >
+    <mat-option
+      [value]="option.value"
+      *ngFor="let option of defaultInputColumns.options"
+    >
+      {{ option.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

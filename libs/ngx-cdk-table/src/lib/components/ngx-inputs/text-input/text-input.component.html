@@ -1,0 +1,8 @@
+<mat-form-field
+  *ngIf="defaultInputColumns"
+  appearance="outline"
+  [floatLabel]="defaultInputColumns.label?.floatLabel ?? 'always'"
+>
+  <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
+  <input matInput />
+</mat-form-field>

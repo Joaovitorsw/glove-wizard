@@ -1,10 +1,11 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "npmScope": "glove-wizard",
   "affected": {
     "defaultBase": "master"
   },
   "cli": {
-    "defaultCollection": "@nrwl/workspace"
+    "packageManager": "npm"
   },
   "implicitDependencies": {
     "package.json": {
@@ -15,23 +16,60 @@
   },
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "@nrwl/nx-cloud",
       "options": {
         "cacheableOperations": [
           "build",
           "lint",
           "test",
           "e2e"
-        ]
+        ],
+        "accessToken": "MWMwODUyY2MtN2NkNC00MmM3LTk5YTEtNThhMzMyZDE0NTNhfHJlYWQtd3JpdGU="
       }
     }
   },
-  "targetDependencies": {
-    "build": [
-      {
-        "target": "build",
-        "projects": "dependencies"
-      }
-    ]
+  "generators": {
+    "@nrwl/angular:application": {
+      "style": "scss",
+      "linter": "eslint",
+      "unitTestRunner": "karma",
+      "e2eTestRunner": "cypress"
+    },
+    "@nrwl/angular:library": {
+      "linter": "eslint",
+      "unitTestRunner": "karma"
+    },
+    "@nrwl/angular:component": {
+      "style": "scss",
+      "displayBlock": true,
+      "changeDetection": "OnPush"
+    },
+    "@schematics/angular:component": {
+      "style": "scss",
+      "displayBlock": true,
+      "changeDetection": "OnPush"
+    },
+    "@schematics/angular:service": {
+      "flat": false
+    },
+    "@schematics/angular:pipe": {
+      "flat": false
+    },
+    "@schematics/angular:directive": {
+      "flat": false
+    },
+    "@schematics/angular:module": {
+      "flat": true
+    },
+    "@schematics/angular:application": {
+      "strict": true
+    }
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ]
+    }
   }
 }

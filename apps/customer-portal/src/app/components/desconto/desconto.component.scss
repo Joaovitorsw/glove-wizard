@@ -1,0 +1,22 @@
+:host {
+  display: block;
+
+  ::ng-deep {
+    mat-form-field {
+      font-size: 12px;
+    }
+    input {
+      position: relative;
+      top: 5px;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-infix {
+      padding: 0;
+      height: 25px;
+      margin: 0;
+    }
+    .mat-form-field-wrapper {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

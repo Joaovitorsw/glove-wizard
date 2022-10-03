@@ -1,0 +1,54 @@
+:host {
+  display: block;
+
+  .text-overflow {
+    display: block;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+}
+table {
+  ::ng-deep {
+    mat-form-field {
+      font-size: 12px;
+    }
+
+    .mat-select-value {
+      position: relative;
+      top: 3px;
+    }
+    .mat-form-field-appearance-outline .mat-select-arrow-wrapper {
+      position: relative;
+      top: 6px;
+    }
+
+    .mat-form-field-appearance-outline
+      .mat-form-field-outline-thick
+      .mat-form-field-outline-start,
+    .mat-form-field-appearance-outline
+      .mat-form-field-outline-thick
+      .mat-form-field-outline-end,
+    .mat-form-field-appearance-outline
+      .mat-form-field-outline-thick
+      .mat-form-field-outline-gap {
+      border-width: 1px;
+    }
+    mat-label {
+      font-weight: bold;
+    }
+    input {
+      position: relative;
+      top: 5px;
+    }
+    .mat-form-field-appearance-outline .mat-form-field-infix {
+      padding: 0;
+      height: 25px;
+      margin: 0;
+    }
+    .mat-form-field-wrapper {
+      padding: 0;
+      margin: 0;
+    }
+  }
+}

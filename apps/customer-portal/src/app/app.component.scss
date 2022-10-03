@@ -1,0 +1,89 @@
+:host {
+  ::ng-deep {
+    table {
+      width: 100%;
+      border-collapse: collapse;
+
+      .cdk-column-name,
+      .cdk-column-surname {
+        max-width: 50px;
+        overflow: hidden;
+      }
+
+      .cdk-column-id {
+        max-width: 100px;
+        text-align: center;
+      }
+      .cdk-column-qtd,
+      .cdk-column-add {
+        max-width: 150px;
+        width: unset;
+        text-align: unset !important;
+        & > * {
+          width: unset;
+          max-width: 150px;
+          & > * {
+            max-width: 150px;
+            width: unset;
+            & > * {
+              width: unset;
+              max-width: 150px;
+            }
+          }
+        }
+        text-align: center;
+      }
+
+      .cdk-column-id .mat-sort-header-container {
+        justify-content: center !important;
+        width: 100%;
+      }
+      &:not(th) {
+        .bold {
+          font-weight: bold;
+        }
+
+        .red {
+          color: red;
+        }
+        .green {
+          color: green;
+        }
+      }
+
+      th {
+        text-align: left;
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f2f2f2;
+      }
+
+      tr:not(.cdk-header-row):hover {
+        background-color: #ddd;
+      }
+
+      td,
+      th {
+        width: 100%;
+      }
+      .cdk-column-name,
+      .cdk-column-surname {
+        width: 43%;
+      }
+
+      .cdk-column-id,
+      .cdk-column-qtd,
+      .cdk-column-add {
+        width: unset !important;
+      }
+    }
+  }
+}
