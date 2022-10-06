@@ -3,12 +3,15 @@ import {
   ChangeDetectionStrategy,
   Component,
   EventEmitter,
-  OnInit,
 } from '@angular/core';
+import { FormControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { TestUser } from '@glove-wizard/ngx-cdk-table';
-import { TableInputComponent } from 'libs/ngx-cdk-table/src/lib/models/table';
+import { AbstractTableInputControl } from 'libs/ngx-cdk-table/src/lib/models/abstract-table-input-control';
+import {
+  NgxTableData,
+  TextTableInput,
+} from 'libs/ngx-cdk-table/src/lib/models/table';
 @Component({
   selector: 'glove-wizard-desconto',
   standalone: true,
@@ -17,23 +20,10 @@ import { TableInputComponent } from 'libs/ngx-cdk-table/src/lib/models/table';
   styleUrls: ['./desconto.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class DescontoComponent
-  implements OnInit, TableInputComponent<TestUser>
-{
-  ngOnInit(): void {}
-
-  element: TestUser;
-  eventAction: EventEmitter<TestUser>;
-  writeValue(obj: any): void {
-    throw new Error('Method not implemented.');
-  }
-  registerOnChange(fn: any): void {
-    throw new Error('Method not implemented.');
-  }
-  registerOnTouched(fn: any): void {
-    throw new Error('Method not implemented.');
-  }
-  setDisabledState?(isDisabled: boolean): void {
-    throw new Error('Method not implemented.');
-  }
+export class DescontoComponent<T> extends AbstractTableInputControl<T> {
+  override control = new FormControl();
+  override element: NgxTableData<T>;
+  override defaultInputColumns: TextTableInput<T>;
+  override eventAction: EventEmitter<T> = new EventEmitter<T>();
+  value: any;
 }

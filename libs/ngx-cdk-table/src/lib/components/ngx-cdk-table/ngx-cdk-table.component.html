@@ -16,7 +16,7 @@
         <th
           cdk-header-cell
           mat-sort-header
-          [disabled]="columnOption.disabledSorting ?? true"
+          [disabled]="!columnOption.canSort"
           *cdkHeaderCellDef
         >
           {{ columnOption.headerTitle }}
@@ -134,7 +134,11 @@
 
       <!-- Célula de linha -->
 
-      <tr cdk-row *cdkRowDef="let element; columns: displayedColumns"></tr>
+      <tr
+        [ngClass]="setRowClass(element)"
+        cdk-row
+        *cdkRowDef="let element; columns: displayedColumns; let index = index"
+      ></tr>
 
       <!-- Célula de rodapé -->
       <tr

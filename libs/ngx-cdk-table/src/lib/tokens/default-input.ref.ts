@@ -1,9 +1,10 @@
 import { InjectionToken, Type } from '@angular/core';
-import { CheckboxInputComponent } from '../components/ngx-inputs/checkbox-input/checkbox-input.component';
-import { DateInputComponent } from '../components/ngx-inputs/date-input/date-input.component';
-import { NumberInputComponent } from '../components/ngx-inputs/number-input/number-input.component';
-import { SelectInputComponent } from '../components/ngx-inputs/select-input/select-input.component';
-import { TextInputComponent } from '../components/ngx-inputs/text-input/text-input.component';
+import { CheckboxInputComponent } from '../components/ngx-table-inputs/checkbox-input/checkbox-input.component';
+import { DateInputComponent } from '../components/ngx-table-inputs/date-input/date-input.component';
+import { NumberInputComponent } from '../components/ngx-table-inputs/number-input/number-input.component';
+import { SelectInputComponent } from '../components/ngx-table-inputs/select-input/select-input.component';
+import { TextInputComponent } from '../components/ngx-table-inputs/text-input/text-input.component';
+
 import { TableInputComponent } from '../models/table';
 
 export const EXAMPLE_DEFAULT_INPUT_REF: DefaultInputTypeRef<any> = {

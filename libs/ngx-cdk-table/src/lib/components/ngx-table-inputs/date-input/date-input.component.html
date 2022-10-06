@@ -1,0 +1,43 @@
+<mat-form-field
+  *ngIf="defaultInputColumns.rangeDate && !isFormControl(control); else date"
+  appearance="outline"
+  [floatLabel]="defaultInputColumns.label?.floatLabel ?? 'always'"
+  [formGroup]="control"
+>
+  <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
+  <mat-date-range-input [rangePicker]="picker">
+    <input
+      matStartDate
+      formatTypedDate
+      [placeholder]="defaultInputColumns.rangeDate.startDatePlaceholder"
+      formControlName="startDate"
+    />
+    <input
+      matEndDate
+      formatTypedDate
+      [placeholder]="defaultInputColumns.rangeDate.endDatePlaceholder"
+      formControlName="endDate"
+    />
+  </mat-date-range-input>
+  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+  <mat-date-range-picker #picker></mat-date-range-picker>
+</mat-form-field>
+
+<ng-template #date>
+  <mat-form-field
+    *ngIf="isFormControl(control)"
+    appearance="outline"
+    [floatLabel]="defaultInputColumns.label?.floatLabel ?? 'always'"
+  >
+    <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
+    <input
+      matInput
+      [placeholder]="defaultInputColumns.placeholder ?? ''"
+      [matDatepicker]="picker"
+      formatTypedDate
+      [formControl]="control"
+    />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+  </mat-form-field>
+</ng-template>

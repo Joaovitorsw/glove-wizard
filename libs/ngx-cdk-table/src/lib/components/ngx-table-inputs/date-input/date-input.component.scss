@@ -1,0 +1,28 @@
+:host {
+  display: block;
+
+  ::ng-deep {
+    .mat-form-field:not(.mat-form-field-appearance-legacy)
+      .mat-form-field-prefix
+      .mat-icon-button,
+    .mat-form-field:not(.mat-form-field-appearance-legacy)
+      .mat-form-field-suffix
+      .mat-icon-button {
+      position: relative;
+      top: 3px;
+    }
+    .mat-date-range-input-container {
+      position: relative;
+      top: 3px;
+    }
+
+    .mat-form-field:not(.mat-focused) {
+      .mat-form-field-empty.mat-form-field-label,
+      .mat-form-field-can-float.mat-form-field-should-float
+        .mat-form-field-label {
+        position: relative;
+        top: 3px;
+      }
+    }
+  }
+}

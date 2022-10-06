@@ -26,7 +26,7 @@
         ],
         "@typescript-eslint/no-shadow": "off",
         "no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-        "@angular-eslint/no-input-rename": "off",
+        "@angular-eslint/no-input-rename": ["warning"],
         "curly": ["error", "multi-line"],
         "@typescript-eslint/member-ordering": [
           "error",
@@ -98,7 +98,15 @@
             "selector": "property",
             "types": ["boolean"],
             "format": ["PascalCase"],
-            "prefix": ["is", "should", "has", "can", "did", "will"]
+            "prefix": [
+              "is",
+              "should",
+              "has",
+              "can",
+              "did",
+              "will",
+              "standalone"
+            ]
           },
           {
             "selector": "typeLike",

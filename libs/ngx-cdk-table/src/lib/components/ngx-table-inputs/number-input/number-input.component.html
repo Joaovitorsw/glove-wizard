@@ -4,5 +4,10 @@
   [floatLabel]="defaultInputColumns.label?.floatLabel ?? 'always'"
 >
   <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
-  <input matInput />
+  <input
+    [disabled]="!!defaultInputColumns.readonly"
+    [formControl]="control"
+    type="number"
+    matInput
+  />
 </mat-form-field>

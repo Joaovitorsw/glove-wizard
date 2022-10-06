@@ -1,36 +1,44 @@
 :host {
+  .selected {
+    color: blue;
+    font-weight: bold;
+
+    & > * {
+      font-weight: bold;
+      color: blue;
+      & > * {
+        font-weight: bold;
+        color: blue;
+      }
+    }
+  }
   ::ng-deep {
     table {
       width: 100%;
       border-collapse: collapse;
+
+      .selected {
+        & > * {
+          font-weight: bold;
+          color: blue;
+          & > * {
+            font-weight: bold;
+            color: blue;
+          }
+        }
+      }
 
       .cdk-column-name,
       .cdk-column-surname {
         max-width: 50px;
         overflow: hidden;
       }
-
+      .cdk-column-selected {
+        width: unset;
+      }
+      .cdk-column-selected,
       .cdk-column-id {
         max-width: 100px;
-        text-align: center;
-      }
-      .cdk-column-qtd,
-      .cdk-column-add {
-        max-width: 150px;
-        width: unset;
-        text-align: unset !important;
-        & > * {
-          width: unset;
-          max-width: 150px;
-          & > * {
-            max-width: 150px;
-            width: unset;
-            & > * {
-              width: unset;
-              max-width: 150px;
-            }
-          }
-        }
         text-align: center;
       }
 
@@ -74,15 +82,10 @@
       th {
         width: 100%;
       }
+
       .cdk-column-name,
       .cdk-column-surname {
         width: 43%;
-      }
-
-      .cdk-column-id,
-      .cdk-column-qtd,
-      .cdk-column-add {
-        width: unset !important;
       }
     }
   }

@@ -3,3 +3,13 @@
   [tableOptions]="tableOptions"
   [columnOptions]="columnOptions"
 ></ngx-cdk-table>
+
+<ul>
+  <li
+    [class.selected]="item.selected"
+    style="margin-top: 5px"
+    *ngFor="let item of dataSource"
+  >
+    {{ item | json }}
+  </li>
+</ul>

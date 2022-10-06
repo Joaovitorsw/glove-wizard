@@ -1,3 +1,4 @@
+/* eslint-disable @angular-eslint/component-selector */
 import { CdkTable } from '@angular/cdk/table';
 import {
   AfterViewInit,
@@ -15,11 +16,12 @@ import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import {
   ColumnOptions,
-  CustomInputType,
-  DefaultInputType,
+  CustomTableInputType,
+  DefaultInputTableType,
   MatPaginatorProperties,
   NgxPaginationOptions,
   NgxPaginatorProperties,
+  NgxTableData,
   NgxTableSortEvent,
   TableOptions,
 } from '../../models/table';
@@ -44,26 +46,28 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
   @Input() columnOptions: ColumnOptions<T>[];
   @Input('dataSource') originalDataSource: T[];
 
+  viewDataSource: T[];
+  matDataSource: MatTableDataSource<T>;
+
   constructor(
     @Inject(DEFAULT_INPUT_TYPE_REF)
     @Optional()
     private DEFAULT_INPUT_REF: DefaultInputTypeRef<T>
   ) {}
 
-  viewDataSource: T[];
-  matDataSource: MatTableDataSource<T>;
-
   get displayedColumns(): string[] {
-    return this.columnOptions.map((column) => {
-      return this.getCdkColumnDef(column);
-    });
+    return this.columnOptions.map((column) => this.getCdkColumnDef(column));
   }
   ngOnInit(): void {
     if (!this.DEFAULT_INPUT_REF) {
       this.DEFAULT_INPUT_REF = EXAMPLE_DEFAULT_INPUT_REF;
     }
 
-    this.viewDataSource = [...this.originalDataSource];
+    this.viewDataSource = this.originalDataSource.map((element, index) => {
+      const ngxElement = element as NgxTableData<T>;
+      ngxElement.ngxCdkTableIndex = index;
+      return ngxElement;
+    });
   }
 
   ngAfterViewInit(): void {
@@ -96,12 +100,11 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     }
 
     if (this.isNgxPaginator(paginatorProperties)) {
-      const index =
-        (paginatorProperties.currentPage - 1) *
-        paginatorProperties.itemsPerPage;
+      const { itemsPerPage, currentPage } = paginatorProperties;
 
-      const length =
-        paginatorProperties.itemsPerPage * paginatorProperties.currentPage;
+      const index = (currentPage - 1) * itemsPerPage;
+
+      const length = itemsPerPage * currentPage;
 
       dataSource.data = this.viewDataSource.slice(index, length);
     }
@@ -151,28 +154,53 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     if (hasElement) return;
 
     viewContainerRef.clear();
+
     nativeElement.remove();
 
     if (this.isDefaultInputType(columnOptions)) {
-      const formColumn = columnOptions.formColumn as DefaultInputType<T>;
-      const componentRef = this.DEFAULT_INPUT_REF[formColumn.type];
-      const viewComponentRef = viewContainerRef.createComponent(componentRef);
-      viewComponentRef.instance.element = element;
-      viewComponentRef.instance.defaultInputColumns = formColumn;
+      this.createDefaultInputComponent(
+        columnOptions,
+        viewContainerRef,
+        element
+      );
       return;
     }
 
-    const componentType = columnOptions.formColumn as CustomInputType<T>;
-    const componentRef = viewContainerRef.createComponent(
+    this.createCustomInputComponent(columnOptions, viewContainerRef, element);
+  }
+
+  private createCustomInputComponent(
+    columnOptions: ColumnOptions<T>,
+    viewContainerRef: ViewContainerRef,
+    element: T
+  ) {
+    const componentType = columnOptions.formColumn as CustomTableInputType<T>;
+
+    const { instance } = viewContainerRef.createComponent(
       componentType.componentRef
     );
-    componentRef.instance.element = element;
+
+    instance.element = element as NgxTableData<T>;
+  }
+
+  private createDefaultInputComponent(
+    columnOptions: ColumnOptions<T>,
+    viewContainerRef: ViewContainerRef,
+    element: T
+  ) {
+    const formColumn = columnOptions.formColumn as DefaultInputTableType<T>;
+    const type = formColumn.type;
+    const componentRef = this.DEFAULT_INPUT_REF[type];
+    const { instance } = viewContainerRef.createComponent(componentRef);
+
+    instance.element = element as NgxTableData<T>;
+    instance.defaultInputColumns = formColumn;
   }
 
   getCdkColumnDef(column: ColumnOptions<T>) {
-    return typeof column.cdkColumn === 'string'
-      ? column.cdkColumn
-      : column.cdkColumn.cellDef;
+    const { cdkColumn } = column;
+
+    return typeof cdkColumn === 'string' ? cdkColumn : cdkColumn.cellDef;
   }
 
   sortingData(event: Sort, eventDataSource: T[]) {
@@ -180,9 +208,10 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
       (column) => this.getCdkColumnDef(column) === event.active
     );
 
-    const property = columnActive && this.getProperty(columnActive);
+    const tableDataPropertySort =
+      columnActive && this.getProperty(columnActive);
 
-    if (!property) return;
+    if (!tableDataPropertySort) return;
 
     if (!this.tableOptions) return;
 
@@ -190,7 +219,7 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
 
     const ngxTableSortEvent = event as NgxTableSortEvent<T>;
 
-    ngxTableSortEvent.active = property.toString() as keyof T;
+    ngxTableSortEvent.active = tableDataPropertySort.toString() as keyof T;
 
     this.tableOptions.sortData(
       ngxTableSortEvent,
@@ -215,7 +244,13 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
   }
 
   isDefaultInputType(columnOptions: ColumnOptions<T>) {
-    return columnOptions.formColumn?.type !== 'custom';
+    const { formColumn } = columnOptions;
+
+    if (!formColumn) return false;
+
+    const { type } = formColumn;
+
+    return type !== 'custom';
   }
 
   isNgxPaginator(
@@ -223,5 +258,17 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
   ): paginator is NgxPaginatorProperties {
     const nxgPaginator = paginator as NgxPaginatorProperties;
     return nxgPaginator.maxSize !== undefined;
+  }
+  setRowClass(element: T) {
+    const { setRowClassFn } = this.tableOptions;
+
+    if (setRowClassFn) {
+      const rowClass = setRowClassFn(element);
+      return rowClass;
+    }
+
+    const EMPTY = '';
+
+    return EMPTY;
   }
 }

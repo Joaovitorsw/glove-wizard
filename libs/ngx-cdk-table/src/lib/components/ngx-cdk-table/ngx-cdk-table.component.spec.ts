@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import {
   COLUMN_OPTIONS,
+  DATA,
   NgxCdkTableModule,
   NGX_PAGINATOR_OPTIONS,
   SUCCESS_CLASS,
@@ -8,7 +9,6 @@ import {
   TestUser,
   WARNING_CLASS,
 } from '@glove-wizard/ngx-cdk-table';
-import { DATA } from '../../mocks/data';
 import { DEFAULT_PIPES_PROVIDERS } from '../../models/generic-pipe';
 import { CURRENCY_PIPE } from '../../tokens/generic-pipe.token';
 

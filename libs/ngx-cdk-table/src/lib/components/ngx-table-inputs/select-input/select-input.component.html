@@ -5,12 +5,13 @@
 >
   <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
   <mat-select
+    [disabled]="!!defaultInputColumns.readonly"
     [formControl]="control"
     [placeholder]="defaultInputColumns.placeholder ?? ''"
   >
     <mat-option
       [value]="option.value"
-      *ngFor="let option of defaultInputColumns.options"
+      *ngFor="let option of createSelectOptions() | async"
     >
       {{ option.label }}
     </mat-option>

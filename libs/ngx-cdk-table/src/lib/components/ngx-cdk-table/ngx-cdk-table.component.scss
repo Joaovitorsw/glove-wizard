@@ -11,6 +11,7 @@
 table {
   ::ng-deep {
     mat-form-field {
+      width: 100%;
       font-size: 12px;
     }
 
@@ -37,7 +38,7 @@ table {
     mat-label {
       font-weight: bold;
     }
-    input {
+    input[matInput] {
       position: relative;
       top: 5px;
     }
@@ -49,6 +50,25 @@ table {
     .mat-form-field-wrapper {
       padding: 0;
       margin: 0;
+    }
+  }
+}
+::ng-deep .mat-form-field-readonly {
+  .mat-form-field-wrapper {
+    .mat-form-field-flex {
+      .mat-form-field-outline {
+        .mat-form-field-outline-start {
+          background-color: rgba(127, 127, 127, 0.25) !important;
+        }
+
+        .mat-form-field-outline-gap {
+          background-color: rgba(127, 127, 127, 0.25) !important;
+        }
+
+        .mat-form-field-outline-end {
+          background-color: rgba(127, 127, 127, 0.25) !important;
+        }
+      }
     }
   }
 }

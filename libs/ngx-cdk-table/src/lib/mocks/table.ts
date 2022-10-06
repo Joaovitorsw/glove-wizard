@@ -7,15 +7,17 @@ import {
   TableOptions,
 } from '../models/table';
 import { CURRENCY_PIPE } from '../tokens/generic-pipe.token';
-import { DATA } from './data';
+import { DATA } from './table-data';
 
 export interface TestUser {
+  selected?: boolean;
   id: number;
   name: string;
   surname: string;
   currency: number;
   qtd: number;
-  add?: boolean;
+  parcelas?: number;
+  subtotal?: string;
 }
 
 const MAT_PAGINATOR_OPTIONS: MatPaginatorProperties = {
@@ -53,6 +55,8 @@ const MAT_PAGINATOR_OPTIONS: MatPaginatorProperties = {
 export const SUCCESS_CLASS = 'green';
 export const WARNING_CLASS = 'bold red';
 export const TEST_USER_DATA = DATA;
+export const SET_COLUMN_CLASS_FN = (element: TestUser) =>
+  element.currency < 3000 ? WARNING_CLASS : SUCCESS_CLASS;
 
 export const NGX_PAGINATOR_OPTIONS: NgxPaginatorProperties = {
   currentPage: 1,
@@ -81,7 +85,7 @@ export const COLUMN_OPTIONS: ColumnOptions<TestUser>[] = [
   },
   {
     headerTitle: 'Moeda do usuário',
-    disabledSorting: false,
+    canSort: false,
     cdkColumn: {
       cellDef: 'moeda',
       columnProperty: 'currency',
@@ -95,20 +99,22 @@ export const COLUMN_OPTIONS: ColumnOptions<TestUser>[] = [
     },
   },
   {
-    headerTitle: 'Desconto',
+    headerTitle: 'Parcelas',
     cdkColumn: {
-      cellDef: 'qtd',
-      columnProperty: 'qtd',
+      cellDef: 'parcelas',
+      columnProperty: 'parcelas',
     },
   },
   {
     headerTitle: 'Quantidade',
     cdkColumn: {
-      cellDef: 'add',
-      columnProperty: 'add',
+      cellDef: 'qtd',
+      columnProperty: 'qtd',
     },
     formColumn: {
       type: 'text',
+
+      key: 'qtd',
       label: {
         value: 'Quantidade',
         floatLabel: 'always',
