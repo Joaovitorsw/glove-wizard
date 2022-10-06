@@ -1,6 +1,6 @@
 <mat-checkbox
   color="primary"
-  [disabled]="!!defaultInputColumns.readonly"
+  [disabled]="!!defaultInputColumns.readonly || !!defaultInputColumns.disabled"
   [formControl]="control"
 ></mat-checkbox>
 <mat-label *ngIf="defaultInputColumns.label">

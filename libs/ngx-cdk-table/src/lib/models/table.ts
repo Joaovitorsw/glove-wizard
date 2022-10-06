@@ -87,6 +87,7 @@ export interface SelectTableInput<T> extends TableInput<T> {
 export type TableInput<T> = {
   key: keyof T;
   readonly?: boolean;
+  disabled?: boolean;
   placeholder?: string;
   formControl: FormControlProperties;
   label?: {

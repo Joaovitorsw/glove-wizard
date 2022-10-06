@@ -90,10 +90,21 @@ export class AppComponent {
           startDate?: Date;
           endDate?: Date;
         } = element;
-        const cellProperty =
-          dateInputElement.startDate?.toLocaleDateString('pt-BR') +
-          ' - ' +
-          dateInputElement.endDate?.toLocaleDateString('pt-BR');
+
+        const defaultMessage = 'Não especificado';
+
+        if (!element) return defaultMessage;
+
+        const startDate = dateInputElement.startDate
+          ? dateInputElement?.startDate?.toLocaleDateString('pt-BR')
+          : defaultMessage;
+
+        const endDate = dateInputElement?.endDate
+          ? dateInputElement.endDate?.toLocaleDateString('pt-BR')
+          : defaultMessage;
+
+        const cellProperty = `${startDate} - ${endDate}`;
+
         return cellProperty;
       },
     },
@@ -243,7 +254,7 @@ export class AppComponent {
           label: {
             value: 'Subtotal',
           },
-          readonly: true,
+          disabled: true,
         },
       },
       {
@@ -262,7 +273,7 @@ export class AppComponent {
       ...user,
       name: `${user.id} - ${user.name} ${user.surname} ${user.name} ${user.surname} `,
       surname: `${user.surname} ${user.name} ${user.name} ${user.surname} `,
-      qtd: 0,
+      qtd: 5,
       editable: true,
       ngxCdkTableIndex: index,
     };
