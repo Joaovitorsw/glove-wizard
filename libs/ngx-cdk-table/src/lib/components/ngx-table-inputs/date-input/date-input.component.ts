@@ -59,7 +59,7 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
 
     let controlValueChanges = this.control.valueChanges;
 
-    const { formControl } = this.defaultInputColumns;
+    const { formControl, key } = this.defaultInputColumns;
 
     if (formControl && formControl.valueChanges) {
       controlValueChanges = formControl.valueChanges(
@@ -70,7 +70,7 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
     }
 
     controlValueChanges.subscribe((value) => {
-      this.element.dateInput = value;
+      this.element[key] = value;
     });
   }
 

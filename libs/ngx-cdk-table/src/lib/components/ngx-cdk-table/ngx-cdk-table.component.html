@@ -42,7 +42,14 @@
           >
             <!-- Abreviação células com conteúdo muito grande -->
             <span gloveWizardAutoAbbrev class="text-overflow">
-              <span class="text">
+              <span class="text" *ngIf="columnOption.cellPropertyFn">
+                {{
+                  columnOption.cellPropertyFn(
+                    element[getProperty(columnOption)]
+                  ) | genericPipe: columnOption.pipe.type:columnOption.pipe.args
+                }}
+              </span>
+              <span class="text" *ngIf="!columnOption.cellPropertyFn">
                 {{
                   element[getProperty(columnOption)]
                     | genericPipe: columnOption.pipe.type:columnOption.pipe.args
@@ -102,7 +109,14 @@
             >
               <!-- Abreviação células com conteúdo muito grande -->
               <span gloveWizardAutoAbbrev class="text-overflow">
-                <span class="text">
+                <span class="text" *ngIf="columnOption.cellPropertyFn">
+                  {{
+                    columnOption.cellPropertyFn(
+                      element[getProperty(columnOption)]
+                    )
+                  }}
+                </span>
+                <span class="text" *ngIf="!columnOption.cellPropertyFn">
                   {{ element[getProperty(columnOption)] }}
                 </span>
               </span>

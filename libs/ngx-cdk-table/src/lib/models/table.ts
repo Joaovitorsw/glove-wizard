@@ -21,6 +21,7 @@ export type ColumnOptions<T> =
 
 export type BaseColumnOptions<T> = {
   cdkColumn: (string & keyof T) | ParcialColumnOptions<T> | 'action';
+
   headerTitle: string;
   canSort?: boolean;
   setColumnClassFn?: (value: T) => string;
@@ -38,9 +39,12 @@ export interface ColumnAction<T> extends Omit<BaseColumnOptions<T>, 'canSort'> {
 }
 export type MenuAction<T> = {};
 export interface ColumnFormOptions<T> extends BaseColumnOptions<T> {
-  formColumn?: DefaultInputTableType<T> | CustomTableInputType<T>;
+  formColumn: DefaultInputTableType<T> | CustomTableInputType<T>;
 }
 export interface ColumnBaseOptions<T> extends BaseColumnOptions<T> {
+  cellPropertyFn?: (
+    element: NgxTableData<T>
+  ) => string | number | boolean | undefined;
   pipe?: {
     type: InjectionToken<PipeTransform>;
     args?: string[] | string | number | boolean | null;
@@ -53,7 +57,7 @@ export type DefaultInputTableType<T> =
   | SelectTableInput<T>
   | CheckboxTableInput<T>;
 
-export interface DateTableInput<T> extends Omit<TableInput<T>, 'key'> {
+export interface DateTableInput<T> extends TableInput<T> {
   type: 'date';
   rangeDate?: {
     startDatePlaceholder?: string;
@@ -84,7 +88,7 @@ export type TableInput<T> = {
   key: keyof T;
   readonly?: boolean;
   placeholder?: string;
-  formControl?: FormControlProperties;
+  formControl: FormControlProperties;
   label?: {
     value: string;
     floatLabel?: FloatLabelOptions;
@@ -109,7 +113,7 @@ export type SelectOption = {
 
 export type CustomTableInputType<T> = {
   type: 'custom';
-  formControl?: FormControlProperties;
+  formControl: FormControlProperties;
   componentRef: Type<TableInputComponent<T>>;
 };
 

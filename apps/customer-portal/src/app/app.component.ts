@@ -5,6 +5,7 @@ import {
   SET_COLUMN_CLASS_FN,
   TABLE_OPTIONS,
   TestUser,
+  TestUserRunTime,
   TEST_USER_DATA,
 } from '@glove-wizard/ngx-cdk-table';
 import { NgxActionCellComponent } from 'libs/ngx-cdk-table/src/lib/components/ngx-action-cell/ngx-action-cell.component';
@@ -26,7 +27,7 @@ import { debounceTime, Observable, of, tap } from 'rxjs';
 })
 export class AppComponent {
   title = 'customer-portal';
-  editTableOptions: TableOptions<TestUser> = {
+  editTableOptions: TableOptions<TestUserRunTime> = {
     ...TABLE_OPTIONS,
     paginatorProperties: NGX_PAGINATOR_OPTIONS,
     setRowClassFn({ selected }) {
@@ -34,18 +35,21 @@ export class AppComponent {
       return selected ? 'selected' : EMPTY_STRING;
     },
   };
-  tableOptions: TableOptions<TestUser> = {
+  tableOptions: TableOptions<TestUserRunTime> = {
     ...TABLE_OPTIONS,
     setRowClassFn({ selected }) {
       const EMPTY_STRING = '';
       return selected ? 'selected' : EMPTY_STRING;
     },
   };
-  columnOptions: ColumnOptions<TestUser>[] = [
+  columnOptions: ColumnOptions<TestUserRunTime>[] = [
     {
       headerTitle: '',
       cdkColumn: 'selected',
       formColumn: {
+        formControl: {
+          controls: [],
+        },
         key: 'selected',
         type: 'checkbox',
       },
@@ -78,6 +82,22 @@ export class AppComponent {
       setColumnClassFn: SET_COLUMN_CLASS_FN,
     },
     {
+      headerTitle: 'Periodo',
+      cdkColumn: 'periodo',
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+      cellPropertyFn(element) {
+        const dateInputElement: typeof element & {
+          startDate?: Date;
+          endDate?: Date;
+        } = element;
+        const cellProperty =
+          dateInputElement.startDate?.toLocaleDateString('pt-BR') +
+          ' - ' +
+          dateInputElement.endDate?.toLocaleDateString('pt-BR');
+        return cellProperty;
+      },
+    },
+    {
       headerTitle: 'Quantidade',
       cdkColumn: 'qtd',
       setColumnClassFn: SET_COLUMN_CLASS_FN,
@@ -104,6 +124,9 @@ export class AppComponent {
         formColumn: {
           key: 'selected',
           type: 'checkbox',
+          formControl: {
+            controls: [],
+          },
         },
       },
       {
@@ -111,11 +134,7 @@ export class AppComponent {
         cdkColumn: 'name',
         setColumnClassFn: SET_COLUMN_CLASS_FN,
       },
-      {
-        headerTitle: 'Sobrenome do usuário',
-        cdkColumn: 'surname',
-        setColumnClassFn: SET_COLUMN_CLASS_FN,
-      },
+
       {
         headerTitle: 'Moeda do usuário',
         canSort: true,
@@ -130,6 +149,25 @@ export class AppComponent {
         setColumnClassFn: SET_COLUMN_CLASS_FN,
       },
       {
+        headerTitle: 'Périodo',
+        cdkColumn: {
+          cellDef: 'periodo',
+          columnProperty: 'periodo',
+        },
+
+        formColumn: {
+          type: 'date',
+          rangeDate: {
+            endDatePlaceholder: 'Data final',
+            startDatePlaceholder: 'Data inicial',
+          },
+          key: 'periodo',
+          formControl: {
+            controls: [],
+          },
+        },
+      },
+      {
         headerTitle: 'Parcelas',
         canSort: true,
         cdkColumn: {
@@ -139,8 +177,8 @@ export class AppComponent {
         formColumn: {
           type: 'text',
           key: 'parcelas',
-
           formControl: {
+            controls: [],
             valueChanges(
               valueChanges$,
               control,
@@ -164,6 +202,7 @@ export class AppComponent {
         },
         formColumn: {
           formControl: {
+            controls: [],
             valueChanges(
               valueChanges$,
               control,
@@ -197,6 +236,9 @@ export class AppComponent {
         formColumn: {
           key: 'subtotal',
           type: 'text',
+          formControl: {
+            controls: [],
+          },
           placeholder: 'Subtotal',
           label: {
             value: 'Subtotal',
@@ -211,11 +253,11 @@ export class AppComponent {
         actionComponentRef: NgxActionCellComponent,
         setColumnClassFn: SET_COLUMN_CLASS_FN,
       },
-    ] as ColumnOptions<TestUser>[];
+    ] as ColumnOptions<TestUserRunTime>[];
     return columnOptions;
   })();
-  selectedDataSource: TestUser[] = [];
-  dataSource: TestUser[] = TEST_USER_DATA.map((user, index) => {
+  selectedDataSource: TestUserRunTime[] = [];
+  dataSource: TestUserRunTime[] = TEST_USER_DATA.map((user, index) => {
     const newUser = {
       ...user,
       name: `${user.id} - ${user.name} ${user.surname} ${user.name} ${user.surname} `,
@@ -229,7 +271,7 @@ export class AppComponent {
 
   sideEffectTap(
     valueChanges$: Observable<any>,
-    element: NgxTableData<TestUser>,
+    element: NgxTableData<TestUserRunTime>,
     hasDebounce?: number
   ) {
     const valueChanges$$ = valueChanges$.pipe(this.sideEffectTable(element));
@@ -242,7 +284,7 @@ export class AppComponent {
     return hasDebounce ? debounceTime$$ : valueChanges$$;
   }
 
-  sideEffectTable(element: NgxTableData<TestUser>) {
+  sideEffectTable(element: NgxTableData<TestUserRunTime>) {
     return tap(() => {
       const subtotal = this.getColumnOptionByProperty('subtotal');
       const selected = this.getColumnOptionByProperty('selected');
@@ -283,23 +325,23 @@ export class AppComponent {
   }
 
   getColumnOptionByProperty(
-    value: keyof TestUser,
-    key: keyof ColumnOptions<TestUser> = 'headerTitle'
+    value: keyof TestUserRunTime,
+    key: keyof ColumnOptions<TestUserRunTime> = 'headerTitle'
   ) {
     return this.editColumnOptions.find((columnOption) => {
       return (
         columnOption.cdkColumn === value ||
-        (columnOption.cdkColumn as ParcialColumnOptions<TestUser>)
+        (columnOption.cdkColumn as ParcialColumnOptions<TestUserRunTime>)
           .columnProperty === value
       );
-    });
+    }) as ColumnFormOptions<TestUserRunTime>;
   }
 
-  tableEvents(tableEvent: TableEvent<TestUser>) {
+  tableEvents(tableEvent: TableEvent<TestUserRunTime>) {
     if (tableEvent.event === 'delete') {
       this.selectedDataSource = this.selectedDataSource.filter((user) => {
         return (
-          (user as NgxTableData<TestUser>).ngxCdkTableIndex !==
+          (user as NgxTableData<TestUserRunTime>).ngxCdkTableIndex !==
           tableEvent.element?.ngxCdkTableIndex
         );
       });

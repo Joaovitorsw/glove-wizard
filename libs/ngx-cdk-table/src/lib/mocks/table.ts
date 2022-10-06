@@ -10,15 +10,19 @@ import { CURRENCY_PIPE } from '../tokens/generic-pipe.token';
 import { DATA } from './table-data';
 
 export interface TestUser {
-  selected?: boolean;
   id: number;
   name: string;
   surname: string;
   currency: number;
   qtd: number;
+}
+
+export interface TestUserRunTime extends TestUser {
+  selected?: boolean;
   parcelas?: number;
   subtotal?: string;
   editable?: boolean;
+  periodo?: boolean;
 }
 
 const MAT_PAGINATOR_OPTIONS: MatPaginatorProperties = {
@@ -69,7 +73,7 @@ export const NGX_PAGINATOR_OPTIONS: NgxPaginatorProperties = {
   },
 };
 
-export const COLUMN_OPTIONS: ColumnOptions<TestUser>[] = [
+export const COLUMN_OPTIONS: ColumnOptions<TestUserRunTime>[] = [
   {
     headerTitle: 'Nome do usuário',
     cdkColumn: 'name',
@@ -114,7 +118,9 @@ export const COLUMN_OPTIONS: ColumnOptions<TestUser>[] = [
     },
     formColumn: {
       type: 'text',
-
+      formControl: {
+        controls: [],
+      },
       key: 'qtd',
       label: {
         value: 'Quantidade',
