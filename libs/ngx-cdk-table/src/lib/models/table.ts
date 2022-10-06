@@ -14,22 +14,38 @@ export type NgxTableData<T> = T & {
   ngxCdkTableIndex: number;
 };
 
-export type ColumnOptions<T> = {
-  cdkColumn:
-    | (string & keyof T)
-    | {
-        columnProperty: keyof T;
-        cellDef: string;
-      };
+export type ColumnOptions<T> =
+  | ColumnBaseOptions<T>
+  | ColumnFormOptions<T>
+  | ColumnAction<T>;
+
+export type BaseColumnOptions<T> = {
+  cdkColumn: (string & keyof T) | ParcialColumnOptions<T> | 'action';
   headerTitle: string;
-  formColumn?: DefaultInputTableType<T> | CustomTableInputType<T>;
-  setColumnClassFn?: (value: T) => string;
   canSort?: boolean;
+  setColumnClassFn?: (value: T) => string;
+};
+export type ParcialColumnOptions<T> = {
+  columnProperty: keyof T;
+  cellDef: string;
+};
+export type ValueOf<T> = T[keyof T];
+
+export interface ColumnAction<T> extends Omit<BaseColumnOptions<T>, 'canSort'> {
+  isAction: boolean;
+  clickEvent?: (value: T) => void;
+  actionComponentRef: Type<TableActionComponent<T>>;
+}
+export type MenuAction<T> = {};
+export interface ColumnFormOptions<T> extends BaseColumnOptions<T> {
+  formColumn?: DefaultInputTableType<T> | CustomTableInputType<T>;
+}
+export interface ColumnBaseOptions<T> extends BaseColumnOptions<T> {
   pipe?: {
     type: InjectionToken<PipeTransform>;
     args?: string[] | string | number | boolean | null;
   };
-};
+}
 export type DefaultInputTableType<T> =
   | TextTableInput<T>
   | NumberTableInput<T>
@@ -97,11 +113,20 @@ export type CustomTableInputType<T> = {
   componentRef: Type<TableInputComponent<T>>;
 };
 
+export type TableEvent<T> = {
+  event: PageEvent | Sort | string;
+  element?: NgxTableData<T>;
+};
+
 export interface TableInputComponent<T> {
   element: NgxTableData<T>;
   defaultInputColumns?: DefaultInputTableType<T> | CustomTableInputType<T>;
-  eventAction: EventEmitter<T>;
+  eventAction: EventEmitter<TableEvent<T>>;
   setDisabledState: (isDisabled: boolean) => void;
+}
+export interface TableActionComponent<T> {
+  element: NgxTableData<T>;
+  eventAction: EventEmitter<TableEvent<T>>;
 }
 
 export interface NgxTableSortEvent<T> extends Omit<Sort, 'active'> {

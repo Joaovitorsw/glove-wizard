@@ -1,11 +1,17 @@
 :host {
   display: block;
-
+  border: 1px solid lightgrey;
   .text-overflow {
     display: block;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  .table-auto-size {
+    width: 100%;
+    table-layout: auto;
+    overflow-x: auto;
   }
 }
 table {
@@ -14,7 +20,10 @@ table {
       width: 100%;
       font-size: 12px;
     }
-
+    .mat-form-field-infix {
+      width: clamp(50px, 100vw, 180px);
+      min-width: 50px;
+    }
     .mat-select-value {
       position: relative;
       top: 3px;

@@ -5,7 +5,11 @@ import {
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { AbstractTableInputControl } from '../../../models/abstract-table-input-control';
-import { DateTableInput, NgxTableData } from '../../../models/table';
+import {
+  DateTableInput,
+  NgxTableData,
+  TableEvent,
+} from '../../../models/table';
 export type DateInputValue = {
   value: Date | any;
 };
@@ -26,7 +30,9 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
     dateInput: DateRangeValue | DateInputValue;
   };
   override defaultInputColumns: DateTableInput<T>;
-  override eventAction: EventEmitter<T> = new EventEmitter<T>();
+  override eventAction: EventEmitter<TableEvent<T>> = new EventEmitter<
+    TableEvent<T>
+  >();
   override control: FormControl | FormGroup;
   value: any;
 

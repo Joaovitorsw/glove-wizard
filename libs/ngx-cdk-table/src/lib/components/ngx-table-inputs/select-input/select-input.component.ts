@@ -10,6 +10,7 @@ import {
   NgxTableData,
   SelectOption,
   SelectTableInput,
+  TableEvent,
 } from '../../../models/table';
 
 @Component({
@@ -22,7 +23,9 @@ export class SelectInputComponent<T> extends AbstractTableInputControl<T> {
   override control = new FormControl();
   override element: NgxTableData<T>;
   override defaultInputColumns: SelectTableInput<T>;
-  override eventAction: EventEmitter<T> = new EventEmitter<T>();
+  override eventAction: EventEmitter<TableEvent<T>> = new EventEmitter<
+    TableEvent<T>
+  >();
   value: any;
 
   createSelectOptions(): Observable<SelectOption[]> {

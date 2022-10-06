@@ -23,8 +23,13 @@ import { NumberInputComponent } from './components/ngx-table-inputs/number-input
 import { SelectInputComponent } from './components/ngx-table-inputs/select-input/select-input.component';
 import { TextInputComponent } from './components/ngx-table-inputs/text-input/text-input.component';
 
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { NgxActionCellComponent } from './components/ngx-action-cell/ngx-action-cell.component';
 import { DD_MM_YYY_BRAZILIAN_PICKER_PROVIDERS } from './helpers/date-helper';
 import { GenericPipe } from './pipes/generic-pipe/generic.pipe';
+
 @NgModule({
   imports: [
     BrowserAnimationsModule,
@@ -38,10 +43,13 @@ import { GenericPipe } from './pipes/generic-pipe/generic.pipe';
     MatInputModule,
     MatSelectModule,
     ReactiveFormsModule,
+    MatIconModule,
     MatDatepickerModule,
     FormsModule,
     MatNativeDateModule,
     MatCheckboxModule,
+    MatTooltipModule,
+    MatMenuModule,
   ],
   declarations: [
     NgxCdkTableComponent,
@@ -54,6 +62,7 @@ import { GenericPipe } from './pipes/generic-pipe/generic.pipe';
     DateInputComponent,
     SelectInputComponent,
     CheckboxInputComponent,
+    NgxActionCellComponent,
   ],
   exports: [
     NgxCdkTableComponent,

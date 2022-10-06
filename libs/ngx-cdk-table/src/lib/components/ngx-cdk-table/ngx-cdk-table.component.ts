@@ -4,10 +4,14 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  EventEmitter,
   Inject,
   Input,
+  OnChanges,
   OnInit,
   Optional,
+  Output,
+  SimpleChanges,
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
@@ -15,6 +19,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { MatSort, Sort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import {
+  ColumnAction,
+  ColumnBaseOptions,
+  ColumnFormOptions,
   ColumnOptions,
   CustomTableInputType,
   DefaultInputTableType,
@@ -23,6 +30,7 @@ import {
   NgxPaginatorProperties,
   NgxTableData,
   NgxTableSortEvent,
+  TableEvent,
   TableOptions,
 } from '../../models/table';
 import {
@@ -37,7 +45,9 @@ import {
   styleUrls: ['./ngx-cdk-table.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
+export class NgxCdkTableComponent<T>
+  implements OnInit, AfterViewInit, OnChanges
+{
   @ViewChild(CdkTable) readonly cdkTable: CdkTable<T>;
   @ViewChild(MatPaginator) readonly matPaginator: MatPaginator;
   @ViewChild(MatSort) readonly matSort: MatSort;
@@ -46,8 +56,11 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
   @Input() columnOptions: ColumnOptions<T>[];
   @Input('dataSource') originalDataSource: T[];
 
+  @Output() eventAction = new EventEmitter<TableEvent<T>>();
+
   viewDataSource: T[];
   matDataSource: MatTableDataSource<T>;
+  ngxOnChanges: boolean;
 
   constructor(
     @Inject(DEFAULT_INPUT_TYPE_REF)
@@ -110,6 +123,14 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     }
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['originalDataSource'] && this.cdkTable) {
+      this.ngOnInit();
+      this.ngAfterViewInit();
+    }
+    this.ngxOnChanges = true;
+  }
+
   pageChangeEvent(
     event: number | PageEvent,
     options: NgxPaginatorProperties | MatPaginatorProperties
@@ -142,10 +163,37 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     }
   }
 
+  createActionComponent(
+    viewContainerRef: ViewContainerRef,
+    element: T,
+    columnOptions: ColumnAction<T>
+  ) {
+    const nativeElement = viewContainerRef.element.nativeElement;
+
+    const hasElement = !nativeElement || viewContainerRef.length >= 1;
+
+    if (!this.ngxOnChanges && hasElement) return;
+
+    this.ngxOnChanges = false;
+
+    viewContainerRef.clear();
+
+    nativeElement.remove();
+
+    const { instance } = viewContainerRef.createComponent(
+      columnOptions.actionComponentRef
+    );
+
+    instance.element = element as NgxTableData<T>;
+    instance?.eventAction?.subscribe((element) =>
+      this.eventAction.emit(element)
+    );
+  }
+
   createInput(
     viewContainerRef: ViewContainerRef,
     element: T,
-    columnOptions: ColumnOptions<T>
+    columnOptions: ColumnFormOptions<T>
   ) {
     const nativeElement = viewContainerRef.element.nativeElement;
 
@@ -170,7 +218,7 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
   }
 
   private createCustomInputComponent(
-    columnOptions: ColumnOptions<T>,
+    columnOptions: ColumnFormOptions<T>,
     viewContainerRef: ViewContainerRef,
     element: T
   ) {
@@ -181,10 +229,13 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     );
 
     instance.element = element as NgxTableData<T>;
+    instance?.eventAction?.subscribe((element) =>
+      this.eventAction.emit(element)
+    );
   }
 
   private createDefaultInputComponent(
-    columnOptions: ColumnOptions<T>,
+    columnOptions: ColumnFormOptions<T>,
     viewContainerRef: ViewContainerRef,
     element: T
   ) {
@@ -195,6 +246,9 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
 
     instance.element = element as NgxTableData<T>;
     instance.defaultInputColumns = formColumn;
+    instance?.eventAction?.subscribe((element) =>
+      this.eventAction.emit(element)
+    );
   }
 
   getCdkColumnDef(column: ColumnOptions<T>) {
@@ -230,6 +284,29 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     this.ngAfterViewInit();
   }
 
+  isDefaultInputType(columnOptions: ColumnFormOptions<T>) {
+    const { formColumn } = columnOptions;
+
+    if (!formColumn) return false;
+
+    const { type } = formColumn;
+
+    return type !== 'custom';
+  }
+
+  setRowClass(element: T) {
+    const { setRowClassFn } = this.tableOptions;
+
+    if (setRowClassFn) {
+      const rowClass = setRowClassFn(element);
+      return rowClass;
+    }
+
+    const EMPTY = '';
+
+    return EMPTY;
+  }
+
   getProperty(column: ColumnOptions<T>) {
     return typeof column.cdkColumn === 'string'
       ? column.cdkColumn
@@ -242,15 +319,23 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
     const matPaginator = paginator as MatPaginatorProperties;
     return matPaginator.isMatPaginator !== undefined;
   }
-
-  isDefaultInputType(columnOptions: ColumnOptions<T>) {
-    const { formColumn } = columnOptions;
-
-    if (!formColumn) return false;
-
-    const { type } = formColumn;
-
-    return type !== 'custom';
+  isColumnFormOptions(
+    columnOptions: ColumnOptions<T>
+  ): columnOptions is ColumnFormOptions<T> {
+    const formColumnOptions = columnOptions as ColumnFormOptions<T>;
+    return formColumnOptions.formColumn !== undefined;
+  }
+  isColumnBaseOptions(
+    columnOptions: ColumnOptions<T>
+  ): columnOptions is ColumnBaseOptions<T> {
+    const formColumnOptions = columnOptions as ColumnBaseOptions<T>;
+    return formColumnOptions.canSort !== undefined;
+  }
+  isColumnAction(
+    columnOptions: ColumnOptions<T>
+  ): columnOptions is ColumnAction<T> {
+    const formColumnOptions = columnOptions as ColumnAction<T>;
+    return formColumnOptions.isAction !== undefined;
   }
 
   isNgxPaginator(
@@ -258,17 +343,5 @@ export class NgxCdkTableComponent<T> implements OnInit, AfterViewInit {
   ): paginator is NgxPaginatorProperties {
     const nxgPaginator = paginator as NgxPaginatorProperties;
     return nxgPaginator.maxSize !== undefined;
-  }
-  setRowClass(element: T) {
-    const { setRowClassFn } = this.tableOptions;
-
-    if (setRowClassFn) {
-      const rowClass = setRowClassFn(element);
-      return rowClass;
-    }
-
-    const EMPTY = '';
-
-    return EMPTY;
   }
 }

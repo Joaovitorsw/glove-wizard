@@ -3,7 +3,7 @@
     <table
       cdk-table
       matSort
-      [dataSource]="viewDataSource"
+      [dataSource]="matDataSource"
       (matSortChange)="sortingData($event, viewDataSource)"
       aria-describedby="table-description"
     >
@@ -16,7 +16,9 @@
         <th
           cdk-header-cell
           mat-sort-header
-          [disabled]="!columnOption.canSort"
+          [disabled]="
+            !isColumnBaseOptions(columnOption) || !columnOption.canSort
+          "
           *cdkHeaderCellDef
         >
           {{ columnOption.headerTitle }}
@@ -24,7 +26,12 @@
 
         <!-- Célula com pipe -->
 
-        <ng-container *ngIf="columnOption.pipe; else tableCellTemplate">
+        <ng-container
+          *ngIf="
+            isColumnBaseOptions(columnOption) && columnOption.pipe;
+            else tableCellTemplate
+          "
+        >
           <td
             cdk-cell
             *cdkCellDef="let element"
@@ -48,8 +55,43 @@
         <!-- Criação das Células  -->
 
         <ng-template #tableCellTemplate>
+          <ng-container *ngIf="isColumnAction(columnOption)">
+            <!-- Célula Ação -->
+            <td
+              cdk-cell
+              *cdkCellDef="let element"
+              [ngClass]="
+                columnOption?.setColumnClassFn &&
+                columnOption?.setColumnClassFn(element)
+              "
+              (click)="
+                columnOption.clickEvent && columnOption.clickEvent(element)
+              "
+            >
+              <div
+                viewContainerRef
+                #tableActionViewContainerRef="viewContainerRef"
+              >
+                <div
+                  class="action-component"
+                  *ngIf="
+                    createActionComponent(
+                      tableActionViewContainerRef.viewContainerRef,
+                      element,
+                      columnOption
+                    )
+                  "
+                ></div>
+              </div>
+            </td>
+          </ng-container>
           <!-- Célula Comum -->
-          <ng-container *ngIf="!columnOption.formColumn">
+          <ng-container
+            *ngIf="
+              !isColumnFormOptions(columnOption) &&
+              !isColumnAction(columnOption)
+            "
+          >
             <td
               cdk-cell
               *cdkCellDef="let element"
@@ -68,7 +110,9 @@
           </ng-container>
 
           <!-- Célula com Formulário -->
-          <ng-container *ngIf="columnOption.formColumn">
+          <ng-container
+            *ngIf="isColumnFormOptions(columnOption) && columnOption.formColumn"
+          >
             <td
               cdk-cell
               *cdkCellDef="let element"

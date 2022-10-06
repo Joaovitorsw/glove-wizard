@@ -1,0 +1,46 @@
+:host {
+  display: block;
+  text-align: center;
+
+  .circle {
+    background-color: #d5d5d5;
+    transform: scale(0.75);
+    border-radius: 50%;
+    width: 29px;
+    height: 27px;
+    text-align: center;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease-in-out;
+    padding: 2px 3px;
+    &:hover {
+      background-color: #b5b5b5;
+    }
+  }
+  .add {
+    color: #7cb820 !important;
+  }
+  .delete {
+    color: red !important;
+  }
+  mat-icon {
+    cursor: pointer;
+  }
+}
+::ng-deep {
+  .empty {
+    padding: 10px;
+    span {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      mat-icon {
+        color: red;
+        margin-bottom: 5px;
+      }
+    }
+  }
+}

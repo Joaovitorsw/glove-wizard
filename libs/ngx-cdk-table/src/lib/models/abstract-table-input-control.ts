@@ -5,6 +5,7 @@ import {
   DefaultInputTableType,
   FormControlProperties,
   NgxTableData,
+  TableEvent,
   TableInputComponent,
 } from './table';
 
@@ -17,7 +18,8 @@ export abstract class AbstractTableInputControl<T>
     | DefaultInputTableType<T>
     | CustomTableInputType<T>
     | undefined;
-  eventAction: EventEmitter<T>;
+  eventAction: EventEmitter<TableEvent<T>>;
+
   control: FormControl | FormGroup;
 
   ngOnInit(): void {
@@ -69,9 +71,11 @@ export abstract class AbstractTableInputControl<T>
     }
     if (!tableInput.formControl)
       tableInput.formControl = {} as FormControlProperties;
+
     const { formControl } = tableInput;
 
     if (!formControl.controls) formControl.controls = [];
+
     formControl.controls[element.ngxCdkTableIndex] = control;
 
     return formControl;

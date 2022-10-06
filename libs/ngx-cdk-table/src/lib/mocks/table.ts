@@ -18,6 +18,7 @@ export interface TestUser {
   qtd: number;
   parcelas?: number;
   subtotal?: string;
+  editable?: boolean;
 }
 
 const MAT_PAGINATOR_OPTIONS: MatPaginatorProperties = {

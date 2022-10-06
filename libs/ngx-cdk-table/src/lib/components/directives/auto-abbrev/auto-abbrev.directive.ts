@@ -34,7 +34,7 @@ export class AutoAbbrevDirective implements AfterViewInit {
 
     const abbr$ = `<abbr title="${nativeElementChildren.innerText}">${nativeElementChildren.innerText}</abbr>`;
 
-    if (nativeElementOffsetWidth <= nativeElementChildrenOffsetWidth) {
+    if (nativeElementOffsetWidth < nativeElementChildrenOffsetWidth) {
       this.renderer.setProperty(nativeElementChildren, 'innerHTML', abbr$);
       return;
     }

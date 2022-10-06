@@ -5,7 +5,11 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { AbstractTableInputControl } from '../../../models/abstract-table-input-control';
-import { NgxTableData, NumberTableInput } from '../../../models/table';
+import {
+  NgxTableData,
+  NumberTableInput,
+  TableEvent,
+} from '../../../models/table';
 
 @Component({
   selector: 'glove-wizard-checkbox-input',
@@ -17,6 +21,8 @@ export class CheckboxInputComponent<T> extends AbstractTableInputControl<T> {
   override control = new FormControl();
   override element: NgxTableData<T>;
   override defaultInputColumns: NumberTableInput<T>;
-  override eventAction: EventEmitter<T> = new EventEmitter<T>();
+  override eventAction: EventEmitter<TableEvent<T>> = new EventEmitter<
+    TableEvent<T>
+  >();
   value: any;
 }

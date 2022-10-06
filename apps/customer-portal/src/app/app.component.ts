@@ -1,14 +1,19 @@
 import { Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import {
+  NGX_PAGINATOR_OPTIONS,
   SET_COLUMN_CLASS_FN,
   TABLE_OPTIONS,
   TestUser,
   TEST_USER_DATA,
 } from '@glove-wizard/ngx-cdk-table';
+import { NgxActionCellComponent } from 'libs/ngx-cdk-table/src/lib/components/ngx-action-cell/ngx-action-cell.component';
 import {
+  ColumnFormOptions,
   ColumnOptions,
   NgxTableData,
+  ParcialColumnOptions,
+  TableEvent,
   TableOptions,
 } from 'libs/ngx-cdk-table/src/lib/models/table';
 import { CURRENCY_PIPE } from 'libs/ngx-cdk-table/src/lib/tokens/generic-pipe.token';
@@ -21,14 +26,76 @@ import { debounceTime, Observable, of, tap } from 'rxjs';
 })
 export class AppComponent {
   title = 'customer-portal';
+  editTableOptions: TableOptions<TestUser> = {
+    ...TABLE_OPTIONS,
+    paginatorProperties: NGX_PAGINATOR_OPTIONS,
+    setRowClassFn({ selected }) {
+      const EMPTY_STRING = '';
+      return selected ? 'selected' : EMPTY_STRING;
+    },
+  };
   tableOptions: TableOptions<TestUser> = {
     ...TABLE_OPTIONS,
     setRowClassFn({ selected }) {
-      const empty = '';
-      return selected ? 'selected' : empty;
+      const EMPTY_STRING = '';
+      return selected ? 'selected' : EMPTY_STRING;
     },
   };
-  columnOptions: ColumnOptions<TestUser>[] = (() => {
+  columnOptions: ColumnOptions<TestUser>[] = [
+    {
+      headerTitle: '',
+      cdkColumn: 'selected',
+      formColumn: {
+        key: 'selected',
+        type: 'checkbox',
+      },
+    },
+    {
+      headerTitle: 'Nome do usuário',
+      cdkColumn: 'name',
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+    {
+      headerTitle: 'Sobrenome do usuário',
+      cdkColumn: 'surname',
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+    {
+      headerTitle: 'Moeda do usuário',
+      cdkColumn: {
+        cellDef: 'moeda',
+        columnProperty: 'currency',
+      },
+      pipe: {
+        type: CURRENCY_PIPE,
+        args: 'BRL',
+      },
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+    {
+      headerTitle: 'Parcelas',
+      cdkColumn: 'parcelas',
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+    {
+      headerTitle: 'Quantidade',
+      cdkColumn: 'qtd',
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+    {
+      headerTitle: 'Total',
+      cdkColumn: 'subtotal',
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+    {
+      headerTitle: 'Remover',
+      cdkColumn: 'action',
+      isAction: true,
+      actionComponentRef: NgxActionCellComponent,
+      setColumnClassFn: SET_COLUMN_CLASS_FN,
+    },
+  ];
+  editColumnOptions: ColumnOptions<TestUser>[] = (() => {
     const AppComponent = this;
     const columnOptions = [
       {
@@ -64,6 +131,7 @@ export class AppComponent {
       },
       {
         headerTitle: 'Parcelas',
+        canSort: true,
         cdkColumn: {
           cellDef: 'parcelas',
           columnProperty: 'parcelas',
@@ -110,11 +178,14 @@ export class AppComponent {
           label: {
             value: 'Quantidade',
           },
-          options: of([
-            { value: 1, label: '1' },
-            { value: 2, label: '2' },
-            { value: 3, label: '3' },
-          ]),
+          options: of(
+            Array.from({ length: 9 }, (_, i) => {
+              return {
+                value: i + 1,
+                label: i + 1,
+              };
+            })
+          ),
         },
       },
       {
@@ -133,15 +204,25 @@ export class AppComponent {
           readonly: true,
         },
       },
+      {
+        headerTitle: 'Adicionar',
+        cdkColumn: 'action',
+        isAction: true,
+        actionComponentRef: NgxActionCellComponent,
+        setColumnClassFn: SET_COLUMN_CLASS_FN,
+      },
     ] as ColumnOptions<TestUser>[];
     return columnOptions;
   })();
-  dataSource: TestUser[] = TEST_USER_DATA.map((user) => {
+  selectedDataSource: TestUser[] = [];
+  dataSource: TestUser[] = TEST_USER_DATA.map((user, index) => {
     const newUser = {
       ...user,
       name: `${user.id} - ${user.name} ${user.surname} ${user.name} ${user.surname} `,
       surname: `${user.surname} ${user.name} ${user.name} ${user.surname} `,
       qtd: 0,
+      editable: true,
+      ngxCdkTableIndex: index,
     };
     return newUser;
   });
@@ -163,41 +244,37 @@ export class AppComponent {
 
   sideEffectTable(element: NgxTableData<TestUser>) {
     return tap(() => {
-      const subtotal = this.getColumnOption('Total');
-
-      const quantidade = this.getColumnOption('Quantidade');
+      const subtotal = this.getColumnOptionByProperty('subtotal');
+      const selected = this.getColumnOptionByProperty('selected');
+      const quantidade = this.getColumnOptionByProperty('qtd');
 
       const subTotalForm = this.getFormControl(subtotal, element);
-
+      const selectedForm = this.getFormControl(selected, element);
       const quantidadeForm = this.getFormControl(quantidade, element);
 
       this.writeWithDelay(() => {
         if (subTotalForm && subTotalForm instanceof FormControl) {
           const parcelas = Number(element.parcelas);
-          const hasQuantityField = element.qtd;
-          if (!hasQuantityField) {
-            element.qtd = 1;
+          const hasQuantityField = Number(element.qtd);
+          selectedForm?.setValue(true);
 
-            if (quantidadeForm)
-              quantidadeForm?.setValue(1, { emitEvent: false });
+          if (!hasQuantityField && quantidadeForm) {
+            quantidadeForm?.setValue(1);
           }
 
-          const quantidade = Number(element.qtd);
-
+          const quantidade = Number(quantidadeForm?.value);
           const total = quantidade * parcelas;
           const totalIsNaN = isNaN(total) ? 0 : total;
-
           const subtotal = totalIsNaN.toFixed(2);
 
-          element.subtotal = subtotal;
           subTotalForm.setValue(subtotal);
         }
-      }, 200);
+      }, 50);
     });
   }
 
   getFormControl(
-    formColumnOptions: ColumnOptions<TestUser> | undefined,
+    formColumnOptions: ColumnFormOptions<TestUser> | undefined,
     element: NgxTableData<TestUser>
   ) {
     return formColumnOptions?.formColumn?.formControl?.controls[
@@ -205,10 +282,38 @@ export class AppComponent {
     ];
   }
 
-  getColumnOption(column: string) {
-    return this.columnOptions.find((columnOption) => {
-      return columnOption.headerTitle === column;
+  getColumnOptionByProperty(
+    value: keyof TestUser,
+    key: keyof ColumnOptions<TestUser> = 'headerTitle'
+  ) {
+    return this.editColumnOptions.find((columnOption) => {
+      return (
+        columnOption.cdkColumn === value ||
+        (columnOption.cdkColumn as ParcialColumnOptions<TestUser>)
+          .columnProperty === value
+      );
     });
+  }
+
+  tableEvents(tableEvent: TableEvent<TestUser>) {
+    if (tableEvent.event === 'delete') {
+      this.selectedDataSource = this.selectedDataSource.filter((user) => {
+        return (
+          (user as NgxTableData<TestUser>).ngxCdkTableIndex !==
+          tableEvent.element?.ngxCdkTableIndex
+        );
+      });
+    }
+    if (tableEvent.event === 'add') {
+      this.selectedDataSource.push(tableEvent.element!);
+      this.selectedDataSource = [...this.selectedDataSource].map((user) => {
+        user.editable = false;
+        return { ...user };
+      });
+      this.dataSource.forEach((user) => {
+        user.editable = true;
+      });
+    }
   }
 
   writeWithDelay = (value: Function, timeout: number) => {

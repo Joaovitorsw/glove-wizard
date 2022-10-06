@@ -2,6 +2,7 @@ import { render } from '@testing-library/angular';
 import { screen } from '@testing-library/dom';
 import { NgxCdkTableModule } from '../../../ngx-cdk-table.module';
 import { AutoAbbrevDirective } from './auto-abbrev.directive';
+
 const TEST_TEMPLATE = `
  <div style="width:120px;height:120px" data-testid="container-text">
    <span style="width:120px;height:120px" gloveWizardAutoAbbrev class="text-overflow" data-testid="text-overflow">

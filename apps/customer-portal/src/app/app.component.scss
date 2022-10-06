@@ -1,4 +1,17 @@
 :host {
+  .no-data {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    mat-icon {
+      margin-bottom: 5px;
+    }
+  }
+  ngx-cdk-table {
+    margin-bottom: 10px;
+  }
   .selected {
     color: blue;
     font-weight: bold;
@@ -36,6 +49,7 @@
       .cdk-column-selected {
         width: unset;
       }
+      .cdk-column-qtd,
       .cdk-column-selected,
       .cdk-column-id {
         max-width: 100px;
@@ -61,7 +75,7 @@
 
       th {
         text-align: left;
-        padding: 10px;
+        padding: 5px 10px;
         border-bottom: 1px solid #ddd;
       }
 
@@ -75,7 +89,7 @@
       }
 
       tr:not(.cdk-header-row):hover {
-        background-color: #ddd;
+        background-color: rgba(221, 221, 221, 0.411);
       }
 
       td,

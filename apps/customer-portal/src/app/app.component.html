@@ -1,8 +1,24 @@
 <ngx-cdk-table
   [dataSource]="dataSource"
+  [tableOptions]="editTableOptions"
+  [columnOptions]="editColumnOptions"
+  (eventAction)="tableEvents($event)"
+></ngx-cdk-table>
+
+<ngx-cdk-table
+  *ngIf="selectedDataSource.length > 0; else noData"
+  [dataSource]="selectedDataSource"
   [tableOptions]="tableOptions"
   [columnOptions]="columnOptions"
+  (eventAction)="tableEvents($event)"
 ></ngx-cdk-table>
+
+<ng-template #noData>
+  <div class="no-data">
+    <mat-icon>info</mat-icon>
+    <span>Não há dados para exibir</span>
+  </div>
+</ng-template>
 
 <ul>
   <li
