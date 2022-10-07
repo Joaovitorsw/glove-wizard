@@ -54,7 +54,7 @@ export class NgxCdkTableComponent<T>
 
   @Input() tableOptions: TableOptions<T>;
   @Input() columnOptions: ColumnOptions<T>[];
-  @Input('dataSource') originalDataSource: T[];
+  @Input() dataSource: T[];
 
   @Output() eventAction = new EventEmitter<TableEvent<T>>();
 
@@ -76,7 +76,7 @@ export class NgxCdkTableComponent<T>
       this.DEFAULT_INPUT_REF = EXAMPLE_DEFAULT_INPUT_REF;
     }
 
-    this.viewDataSource = this.originalDataSource.map((element, index) => {
+    this.viewDataSource = this.dataSource.map((element, index) => {
       const ngxElement = element as NgxTableData<T>;
       ngxElement.ngxCdkTableIndex = index;
       return ngxElement;
@@ -124,11 +124,12 @@ export class NgxCdkTableComponent<T>
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['originalDataSource'] && this.cdkTable) {
+    const { dataSource } = changes;
+    if (dataSource) {
       this.ngOnInit();
       this.ngAfterViewInit();
+      this.ngxOnChanges = !!dataSource;
     }
-    this.ngxOnChanges = true;
   }
 
   pageChangeEvent(
@@ -278,7 +279,7 @@ export class NgxCdkTableComponent<T>
     this.tableOptions.sortData(
       ngxTableSortEvent,
       eventDataSource,
-      this.originalDataSource
+      this.dataSource
     );
 
     this.ngAfterViewInit();
@@ -302,9 +303,9 @@ export class NgxCdkTableComponent<T>
       return rowClass;
     }
 
-    const EMPTY = '';
+    const EMPTY_STRING = '';
 
-    return EMPTY;
+    return EMPTY_STRING;
   }
 
   getProperty(column: ColumnOptions<T>) {

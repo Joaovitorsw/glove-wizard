@@ -29,11 +29,13 @@ export class NgxActionCellComponent<T> implements TableActionComponent<T> {
 
   getEventType() {
     const { editable } = this.element;
+
     return editable ? 'add' : 'delete';
   }
 
   getToolTipMessage() {
     const { editable } = this.element;
+
     return editable
       ? 'Esta ação irá adicionar um cliente a triagem'
       : 'Esta ação irá remover um cliente da triagem';

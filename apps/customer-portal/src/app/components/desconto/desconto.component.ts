@@ -10,6 +10,7 @@ import { MatInputModule } from '@angular/material/input';
 import { AbstractTableInputControl } from 'libs/ngx-cdk-table/src/lib/models/abstract-table-input-control';
 import {
   NgxTableData,
+  TableEvent,
   TextTableInput,
 } from 'libs/ngx-cdk-table/src/lib/models/table';
 @Component({
@@ -24,6 +25,8 @@ export class DescontoComponent<T> extends AbstractTableInputControl<T> {
   override control = new FormControl();
   override element: NgxTableData<T>;
   override defaultInputColumns: TextTableInput<T>;
-  override eventAction: EventEmitter<T> = new EventEmitter<T>();
+  override eventAction: EventEmitter<TableEvent<T>> = new EventEmitter<
+    TableEvent<T>
+  >();
   value: any;
 }

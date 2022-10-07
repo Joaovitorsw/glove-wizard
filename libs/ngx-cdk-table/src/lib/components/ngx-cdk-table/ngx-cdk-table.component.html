@@ -234,7 +234,7 @@
       <!-- Container que os botões de paginas  -->
       <ng-container
         *ngFor="
-          let item of originalDataSource
+          let item of dataSource
             | paginate
               : {
                   itemsPerPage: tableOptions.paginatorProperties.itemsPerPage,

@@ -175,6 +175,13 @@ export class AppComponent {
           key: 'periodo',
           formControl: {
             controls: [],
+            valueChanges(
+              valueChanges$,
+              control,
+              element: NgxTableData<TestUser>
+            ) {
+              return AppComponent.sideEffectTap(valueChanges$, element, 500);
+            },
           },
         },
       },
@@ -219,7 +226,7 @@ export class AppComponent {
               control,
               element: NgxTableData<TestUser>
             ) {
-              return AppComponent.sideEffectTap(valueChanges$, element);
+              return AppComponent.sideEffectTap(valueChanges$, element, 0);
             },
           },
           key: 'qtd',
@@ -254,6 +261,7 @@ export class AppComponent {
           label: {
             value: 'Subtotal',
           },
+          readonly: true,
           disabled: true,
         },
       },
@@ -273,6 +281,7 @@ export class AppComponent {
       ...user,
       name: `${user.id} - ${user.name} ${user.surname} ${user.name} ${user.surname} `,
       surname: `${user.surname} ${user.name} ${user.name} ${user.surname} `,
+      parcelas: +(user.currency / 3).toFixed(2),
       qtd: 5,
       editable: true,
       ngxCdkTableIndex: index,
@@ -300,25 +309,35 @@ export class AppComponent {
       const subtotal = this.getColumnOptionByProperty('subtotal');
       const selected = this.getColumnOptionByProperty('selected');
       const quantidade = this.getColumnOptionByProperty('qtd');
+      const periodo = this.getColumnOptionByProperty('periodo');
 
       const subTotalForm = this.getFormControl(subtotal, element);
       const selectedForm = this.getFormControl(selected, element);
       const quantidadeForm = this.getFormControl(quantidade, element);
+      const periodoForm = this.getFormControl(periodo, element);
 
       this.writeWithDelay(() => {
         if (subTotalForm && subTotalForm instanceof FormControl) {
           const parcelas = Number(element.parcelas);
           const hasQuantityField = Number(element.qtd);
-          selectedForm?.setValue(true);
 
           if (!hasQuantityField && quantidadeForm) {
             quantidadeForm?.setValue(1);
           }
 
           const quantidade = Number(quantidadeForm?.value);
+
           const total = quantidade * parcelas;
           const totalIsNaN = isNaN(total) ? 0 : total;
           const subtotal = totalIsNaN.toFixed(2);
+
+          const periodoGroup = periodoForm?.value;
+          const isSelected =
+            +subtotal > 0 && periodoGroup?.startDate && periodoGroup?.endDate;
+
+          if (isSelected) {
+            selectedForm?.setValue(true);
+          }
 
           subTotalForm.setValue(subtotal);
         }
@@ -357,12 +376,17 @@ export class AppComponent {
         );
       });
     }
+
     if (tableEvent.event === 'add') {
       this.selectedDataSource.push(tableEvent.element!);
-      this.selectedDataSource = [...this.selectedDataSource].map((user) => {
-        user.editable = false;
-        return { ...user };
-      });
+
+      this.selectedDataSource = [
+        ...this.selectedDataSource.map((user) => {
+          user.editable = false;
+          return { ...user };
+        }),
+      ];
+
       this.dataSource.forEach((user) => {
         user.editable = true;
       });

@@ -19,8 +19,6 @@ export abstract class AbstractTableInputControl<T>
   control: FormControl | FormGroup;
 
   ngOnInit(): void {
-    let controlValueChanges$ = this.control.valueChanges;
-
     if (!this.defaultInputColumns) return;
 
     const formControl = this.defaultInputColumns.formControl;
@@ -29,27 +27,25 @@ export abstract class AbstractTableInputControl<T>
       this.element.ngxCdkTableIndex
     ] = this.control;
 
-    const hasCustomValueChanges = formControl && formControl.valueChanges;
-
-    if (hasCustomValueChanges) {
-      controlValueChanges$ = hasCustomValueChanges(
-        controlValueChanges$,
-        this.control,
-        this.element
-      );
-    }
-
     const { key } = this.defaultInputColumns as {
       key: keyof T;
     };
 
-    controlValueChanges$.subscribe((value) => {
+    const valueChanges$ = formControl.valueChanges
+      ? formControl.valueChanges(
+          this.control.valueChanges,
+          this.control,
+          this.element
+        )
+      : this.control.valueChanges;
+
+    valueChanges$.subscribe((value: NgxTableData<T> | any) => {
       this.element[key] = value;
     });
-    const optionSelected = this.element[key];
+    const selectedOption = this.element[key];
 
-    if (optionSelected) {
-      this.control.setValue(optionSelected);
+    if (selectedOption) {
+      this.control.setValue(selectedOption);
     }
   }
 

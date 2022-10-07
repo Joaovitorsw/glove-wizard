@@ -37,7 +37,9 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
   value: any;
 
   override ngOnInit(): void {
-    const optionSelected = this.element.dateInput;
+    const { formControl, key } = this.defaultInputColumns;
+
+    const selectedOption = this.element[key];
 
     const rangeGroup = new FormGroup({
       startDate: new FormControl(),
@@ -49,29 +51,29 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
       ? rangeGroup
       : dateControl;
 
-    if (optionSelected) {
+    const valueChanges$ = formControl.valueChanges
+      ? formControl.valueChanges(
+          this.control.valueChanges,
+          this.control,
+          this.element
+        )
+      : this.control.valueChanges;
+
+    valueChanges$.subscribe((value: any) => {
+      this.element[key] = value;
+    });
+
+    if (selectedOption) {
       const method = this.isFormControl(this.control)
         ? 'setValue'
         : 'patchValue';
 
-      this.control[method](optionSelected);
+      this.control[method](selectedOption);
     }
 
-    let controlValueChanges = this.control.valueChanges;
-
-    const { formControl, key } = this.defaultInputColumns;
-
-    if (formControl && formControl.valueChanges) {
-      controlValueChanges = formControl.valueChanges(
-        controlValueChanges,
-        this.control,
-        this.element
-      );
-    }
-
-    controlValueChanges.subscribe((value) => {
-      this.element[key] = value;
-    });
+    this.defaultInputColumns.formControl.controls[
+      this.element.ngxCdkTableIndex
+    ] = this.control;
   }
 
   isFormControl(control: FormControl | FormGroup): control is FormControl {

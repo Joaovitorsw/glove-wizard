@@ -60,7 +60,7 @@ describe('NgxCdkTableComponent', () => {
     fixture = TestBed.createComponent(NgxCdkTableComponent);
     component = fixture.componentInstance;
     component.tableOptions = TABLE_OPTIONS;
-    component.originalDataSource = DATA;
+    component.dataSource = DATA;
     component.columnOptions = COLUMN_OPTIONS;
     fixture.detectChanges();
   });
@@ -92,7 +92,7 @@ describe('NgxCdkTableComponent', () => {
       ...TABLE_OPTIONS,
       paginatorProperties: NGX_PAGINATOR_OPTIONS,
     };
-    component.originalDataSource = DATA;
+    component.dataSource = DATA;
     component.columnOptions = COLUMN_OPTIONS;
     fixture.detectChanges();
 
@@ -114,7 +114,7 @@ describe('NgxCdkTableComponent', () => {
         },
       },
     };
-    component.originalDataSource = DATA;
+    component.dataSource = DATA;
     component.columnOptions = COLUMN_OPTIONS;
     fixture.detectChanges();
 

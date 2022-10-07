@@ -3,7 +3,8 @@
   [tableOptions]="editTableOptions"
   [columnOptions]="editColumnOptions"
   (eventAction)="tableEvents($event)"
-></ngx-cdk-table>
+>
+</ngx-cdk-table>
 
 <ngx-cdk-table
   *ngIf="selectedDataSource.length > 0; else noData"
