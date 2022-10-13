@@ -23,16 +23,24 @@ import {
   ColumnBaseOptions,
   ColumnFormOptions,
   ColumnOptions,
-  CustomTableInputType,
-  DefaultInputTableType,
+  ColumnType,
+} from '../../models/interface/column-options';
+import {
+  NgxTableData,
+  TableEvent,
+  TableOptions,
+} from '../../models/interface/table';
+import {
   MatPaginatorProperties,
   NgxPaginationOptions,
   NgxPaginatorProperties,
-  NgxTableData,
   NgxTableSortEvent,
-  TableEvent,
-  TableOptions,
-} from '../../models/table';
+} from '../../models/interface/table-features';
+import {
+  CustomTableInputType,
+  DefaultInputTableType,
+} from '../../models/interface/table-input';
+
 import {
   DefaultInputTypeRef,
   DEFAULT_INPUT_TYPE_REF,
@@ -53,14 +61,13 @@ export class NgxCdkTableComponent<T>
   @ViewChild(MatSort) readonly matSort: MatSort;
 
   @Input() tableOptions: TableOptions<T>;
-  @Input() columnOptions: ColumnOptions<T>[];
+  @Input() columnOptions: ColumnOptions<T>;
   @Input() dataSource: T[];
 
   @Output() eventAction = new EventEmitter<TableEvent<T>>();
 
   viewDataSource: T[];
   matDataSource: MatTableDataSource<T>;
-  ngxOnChanges: boolean;
 
   constructor(
     @Inject(DEFAULT_INPUT_TYPE_REF)
@@ -98,9 +105,10 @@ export class NgxCdkTableComponent<T>
 
     this.matDataSource = dataSource;
 
-    this.cdkTable.dataSource = dataSource;
-
-    this.cdkTable.renderRows();
+    if (this.cdkTable) {
+      this.cdkTable.dataSource = dataSource;
+      this.cdkTable.renderRows();
+    }
   }
 
   private setPaginatorType(
@@ -112,7 +120,10 @@ export class NgxCdkTableComponent<T>
       return;
     }
 
-    if (this.isNgxPaginator(paginatorProperties)) {
+    if (
+      this.isNgxPaginator(paginatorProperties) &&
+      !paginatorProperties.isServerSide
+    ) {
       const { itemsPerPage, currentPage } = paginatorProperties;
 
       const index = (currentPage - 1) * itemsPerPage;
@@ -128,7 +139,6 @@ export class NgxCdkTableComponent<T>
     if (dataSource) {
       this.ngOnInit();
       this.ngAfterViewInit();
-      this.ngxOnChanges = !!dataSource;
     }
   }
 
@@ -169,13 +179,12 @@ export class NgxCdkTableComponent<T>
     element: T,
     columnOptions: ColumnAction<T>
   ) {
-    const nativeElement = viewContainerRef.element.nativeElement;
+    const nativeElement = viewContainerRef.element
+      .nativeElement as HTMLDivElement;
 
-    const hasElement = !nativeElement || viewContainerRef.length >= 1;
+    const hasElement = viewContainerRef.length <= 0;
 
-    if (!this.ngxOnChanges && hasElement) return;
-
-    this.ngxOnChanges = false;
+    if (!hasElement || nativeElement?.tagName != 'DIV') return;
 
     viewContainerRef.clear();
 
@@ -247,12 +256,13 @@ export class NgxCdkTableComponent<T>
 
     instance.element = element as NgxTableData<T>;
     instance.defaultInputColumns = formColumn;
+
     instance?.eventAction?.subscribe((element) =>
       this.eventAction.emit(element)
     );
   }
 
-  getCdkColumnDef(column: ColumnOptions<T>) {
+  getCdkColumnDef(column: ColumnType<T>) {
     const { cdkColumn } = column;
 
     return typeof cdkColumn === 'string' ? cdkColumn : cdkColumn.cellDef;
@@ -308,7 +318,7 @@ export class NgxCdkTableComponent<T>
     return EMPTY_STRING;
   }
 
-  getProperty(column: ColumnOptions<T>) {
+  getProperty(column: ColumnType<T>) {
     return typeof column.cdkColumn === 'string'
       ? column.cdkColumn
       : column.cdkColumn.columnProperty;
@@ -321,22 +331,22 @@ export class NgxCdkTableComponent<T>
     return matPaginator.isMatPaginator !== undefined;
   }
   isColumnFormOptions(
-    columnOptions: ColumnOptions<T>
+    columnOptions: ColumnType<T>
   ): columnOptions is ColumnFormOptions<T> {
     const formColumnOptions = columnOptions as ColumnFormOptions<T>;
     return formColumnOptions.formColumn !== undefined;
   }
   isColumnBaseOptions(
-    columnOptions: ColumnOptions<T>
+    columnOptions: ColumnType<T>
   ): columnOptions is ColumnBaseOptions<T> {
     const formColumnOptions = columnOptions as ColumnBaseOptions<T>;
     return formColumnOptions.canSort !== undefined;
   }
   isColumnAction(
-    columnOptions: ColumnOptions<T>
+    columnOptions: ColumnBaseOptions<T> | ColumnFormOptions<T> | ColumnAction<T>
   ): columnOptions is ColumnAction<T> {
     const formColumnOptions = columnOptions as ColumnAction<T>;
-    return formColumnOptions.isAction !== undefined;
+    return formColumnOptions.actionComponentRef !== undefined;
   }
 
   isNgxPaginator(

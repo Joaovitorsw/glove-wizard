@@ -1,363 +1,157 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import {
-  NGX_PAGINATOR_OPTIONS,
-  SET_COLUMN_CLASS_FN,
-  TABLE_OPTIONS,
-  TestUser,
-  TestUserRunTime,
-  TEST_USER_DATA,
-} from '@glove-wizard/ngx-cdk-table';
-import { NgxActionCellComponent } from 'libs/ngx-cdk-table/src/lib/components/ngx-action-cell/ngx-action-cell.component';
+import { TestUser, TestUserRunTime } from '@glove-wizard/ngx-cdk-table';
 import {
   ColumnFormOptions,
   ColumnOptions,
-  NgxTableData,
   ParcialColumnOptions,
+} from 'libs/ngx-cdk-table/src/lib/models/interface/column-options';
+import {
+  NgxTableData,
   TableEvent,
   TableOptions,
-} from 'libs/ngx-cdk-table/src/lib/models/table';
-import { CURRENCY_PIPE } from 'libs/ngx-cdk-table/src/lib/tokens/generic-pipe.token';
-import { debounceTime, Observable, of, tap } from 'rxjs';
+} from 'libs/ngx-cdk-table/src/lib/models/interface/table';
+import { debounceTime, Observable, startWith, tap } from 'rxjs';
+import {
+  CREATE_EDIT_TABLE_COLUMN_OPTIONS,
+  DATA_SOURCE,
+  EDIT_TABLE_OPTIONS,
+  HOME_COLUMN_OPTIONS,
+  HOME_TABLE_OPTIONS,
+} from './constants/app-table';
 
 @Component({
   selector: 'glove-wizard-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   title = 'customer-portal';
-  editTableOptions: TableOptions<TestUserRunTime> = {
-    ...TABLE_OPTIONS,
-    paginatorProperties: NGX_PAGINATOR_OPTIONS,
-    setRowClassFn({ selected }) {
-      const EMPTY_STRING = '';
-      return selected ? 'selected' : EMPTY_STRING;
-    },
-  };
-  tableOptions: TableOptions<TestUserRunTime> = {
-    ...TABLE_OPTIONS,
-    setRowClassFn({ selected }) {
-      const EMPTY_STRING = '';
-      return selected ? 'selected' : EMPTY_STRING;
-    },
-  };
-  columnOptions: ColumnOptions<TestUserRunTime>[] = [
-    {
-      headerTitle: '',
-      cdkColumn: 'selected',
-      formColumn: {
-        formControl: {
-          controls: [],
-        },
-        key: 'selected',
-        type: 'checkbox',
-      },
-    },
-    {
-      headerTitle: 'Nome do usuário',
-      cdkColumn: 'name',
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-    {
-      headerTitle: 'Sobrenome do usuário',
-      cdkColumn: 'surname',
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-    {
-      headerTitle: 'Moeda do usuário',
-      cdkColumn: {
-        cellDef: 'moeda',
-        columnProperty: 'currency',
-      },
-      pipe: {
-        type: CURRENCY_PIPE,
-        args: 'BRL',
-      },
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-    {
-      headerTitle: 'Parcelas',
-      cdkColumn: 'parcelas',
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-    {
-      headerTitle: 'Periodo',
-      cdkColumn: 'periodo',
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-      cellPropertyFn(element) {
-        const dateInputElement: typeof element & {
-          startDate?: Date;
-          endDate?: Date;
-        } = element;
-
-        const defaultMessage = 'Não especificado';
-
-        if (!element) return defaultMessage;
-
-        const startDate = dateInputElement.startDate
-          ? dateInputElement?.startDate?.toLocaleDateString('pt-BR')
-          : defaultMessage;
-
-        const endDate = dateInputElement?.endDate
-          ? dateInputElement.endDate?.toLocaleDateString('pt-BR')
-          : defaultMessage;
-
-        const cellProperty = `${startDate} - ${endDate}`;
-
-        return cellProperty;
-      },
-    },
-    {
-      headerTitle: 'Quantidade',
-      cdkColumn: 'qtd',
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-    {
-      headerTitle: 'Total',
-      cdkColumn: 'subtotal',
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-    {
-      headerTitle: 'Remover',
-      cdkColumn: 'action',
-      isAction: true,
-      actionComponentRef: NgxActionCellComponent,
-      setColumnClassFn: SET_COLUMN_CLASS_FN,
-    },
-  ];
-  editColumnOptions: ColumnOptions<TestUser>[] = (() => {
-    const AppComponent = this;
-    const columnOptions = [
-      {
-        headerTitle: '',
-        cdkColumn: 'selected',
-        formColumn: {
-          key: 'selected',
-          type: 'checkbox',
-          formControl: {
-            controls: [],
-          },
-        },
-      },
-      {
-        headerTitle: 'Nome do usuário',
-        cdkColumn: 'name',
-        setColumnClassFn: SET_COLUMN_CLASS_FN,
-      },
-
-      {
-        headerTitle: 'Moeda do usuário',
-        canSort: true,
-        cdkColumn: {
-          cellDef: 'moeda',
-          columnProperty: 'currency',
-        },
-        pipe: {
-          type: CURRENCY_PIPE,
-          args: 'BRL',
-        },
-        setColumnClassFn: SET_COLUMN_CLASS_FN,
-      },
-      {
-        headerTitle: 'Périodo',
-        cdkColumn: {
-          cellDef: 'periodo',
-          columnProperty: 'periodo',
-        },
-
-        formColumn: {
-          type: 'date',
-          rangeDate: {
-            endDatePlaceholder: 'Data final',
-            startDatePlaceholder: 'Data inicial',
-          },
-          key: 'periodo',
-          formControl: {
-            controls: [],
-            valueChanges(
-              valueChanges$,
-              control,
-              element: NgxTableData<TestUser>
-            ) {
-              return AppComponent.sideEffectTap(valueChanges$, element, 500);
-            },
-          },
-        },
-      },
-      {
-        headerTitle: 'Parcelas',
-        canSort: true,
-        cdkColumn: {
-          cellDef: 'parcelas',
-          columnProperty: 'parcelas',
-        },
-        formColumn: {
-          type: 'text',
-          key: 'parcelas',
-          formControl: {
-            controls: [],
-            valueChanges(
-              valueChanges$,
-              control,
-              element: NgxTableData<TestUser>
-            ) {
-              return AppComponent.sideEffectTap(valueChanges$, element, 500);
-            },
-          },
-          label: {
-            value: 'Parcelas',
-            floatLabel: 'always',
-          },
-          placeholder: 'Parcelas',
-        },
-      },
-      {
-        headerTitle: 'Quantidade',
-        cdkColumn: {
-          cellDef: 'qtd',
-          columnProperty: 'qtd',
-        },
-        formColumn: {
-          formControl: {
-            controls: [],
-            valueChanges(
-              valueChanges$,
-              control,
-              element: NgxTableData<TestUser>
-            ) {
-              return AppComponent.sideEffectTap(valueChanges$, element, 0);
-            },
-          },
-          key: 'qtd',
-          type: 'select',
-          placeholder: 'Selecione uma quantidade',
-          label: {
-            value: 'Quantidade',
-          },
-          options: of(
-            Array.from({ length: 9 }, (_, i) => {
-              return {
-                value: i + 1,
-                label: i + 1,
-              };
-            })
-          ),
-        },
-      },
-      {
-        headerTitle: 'Total',
-        cdkColumn: {
-          cellDef: 'subtotal',
-          columnProperty: 'subtotal',
-        },
-        formColumn: {
-          key: 'subtotal',
-          type: 'text',
-          formControl: {
-            controls: [],
-          },
-          placeholder: 'Subtotal',
-          label: {
-            value: 'Subtotal',
-          },
-          readonly: true,
-          disabled: true,
-        },
-      },
-      {
-        headerTitle: 'Adicionar',
-        cdkColumn: 'action',
-        isAction: true,
-        actionComponentRef: NgxActionCellComponent,
-        setColumnClassFn: SET_COLUMN_CLASS_FN,
-      },
-    ] as ColumnOptions<TestUserRunTime>[];
-    return columnOptions;
-  })();
+  tableOptions: TableOptions<TestUserRunTime> = HOME_TABLE_OPTIONS;
+  columnOptions: ColumnOptions<TestUserRunTime> = HOME_COLUMN_OPTIONS;
+  editTableOptions: TableOptions<TestUserRunTime> = EDIT_TABLE_OPTIONS;
+  editColumnOptions: ColumnOptions<TestUser> =
+    CREATE_EDIT_TABLE_COLUMN_OPTIONS(this);
+  dataSource: TestUserRunTime[] = DATA_SOURCE;
   selectedDataSource: TestUserRunTime[] = [];
-  dataSource: TestUserRunTime[] = TEST_USER_DATA.map((user, index) => {
-    const newUser = {
-      ...user,
-      name: `${user.id} - ${user.name} ${user.surname} ${user.name} ${user.surname} `,
-      surname: `${user.surname} ${user.name} ${user.name} ${user.surname} `,
-      parcelas: +(user.currency / 3).toFixed(2),
-      qtd: 5,
-      editable: true,
-      ngxCdkTableIndex: index,
-    };
-    return newUser;
-  });
 
   sideEffectTap(
     valueChanges$: Observable<any>,
     element: NgxTableData<TestUserRunTime>,
+    sideEffectKey: keyof TestUserRunTime,
     hasDebounce?: number
   ) {
-    const valueChanges$$ = valueChanges$.pipe(this.sideEffectTable(element));
+    const valueChanges$$ = valueChanges$.pipe(
+      startWith(element[sideEffectKey]),
+      this.sideEffectTable(element, sideEffectKey)
+    );
+
+    const timeToDebounce = Number(hasDebounce);
 
     const debounceTime$$ = valueChanges$.pipe(
-      debounceTime(hasDebounce!),
-      this.sideEffectTable(element)
+      startWith(element[sideEffectKey]),
+      debounceTime(timeToDebounce),
+      this.sideEffectTable(element, sideEffectKey)
     );
 
     return hasDebounce ? debounceTime$$ : valueChanges$$;
   }
 
-  sideEffectTable(element: NgxTableData<TestUserRunTime>) {
-    return tap(() => {
-      const subtotal = this.getColumnOptionByProperty('subtotal');
-      const selected = this.getColumnOptionByProperty('selected');
-      const quantidade = this.getColumnOptionByProperty('qtd');
-      const periodo = this.getColumnOptionByProperty('periodo');
-
-      const subTotalForm = this.getFormControl(subtotal, element);
-      const selectedForm = this.getFormControl(selected, element);
-      const quantidadeForm = this.getFormControl(quantidade, element);
-      const periodoForm = this.getFormControl(periodo, element);
-
-      this.writeWithDelay(() => {
-        if (subTotalForm && subTotalForm instanceof FormControl) {
-          const parcelas = Number(element.parcelas);
-          const hasQuantityField = Number(element.qtd);
-
-          if (!hasQuantityField && quantidadeForm) {
-            quantidadeForm?.setValue(1);
-          }
-
-          const quantidade = Number(quantidadeForm?.value);
-
-          const total = quantidade * parcelas;
-          const totalIsNaN = isNaN(total) ? 0 : total;
-          const subtotal = totalIsNaN.toFixed(2);
-
-          const periodoGroup = periodoForm?.value;
-          const isSelected =
-            +subtotal > 0 && periodoGroup?.startDate && periodoGroup?.endDate;
-
-          if (isSelected) {
-            selectedForm?.setValue(true);
-          }
-
-          subTotalForm.setValue(subtotal);
-        }
-      }, 50);
+  sideEffectTable(
+    element: NgxTableData<TestUserRunTime>,
+    sideEffectKey: keyof TestUserRunTime
+  ) {
+    return tap((tapValue: string | number | boolean | undefined) => {
+      const { subTotalForm } = this.recoveryRowForms(element);
+      if (subTotalForm && subTotalForm instanceof FormControl) {
+        this.calculateSubTotalValue(sideEffectKey, tapValue, element);
+      }
     });
+  }
+
+  private calculateSubTotalValue(
+    sideEffectKey: string,
+    tapValue: string | number | boolean | undefined,
+    element: NgxTableData<TestUserRunTime>
+  ) {
+    const { subTotalForm, quantidadeForm, periodoForm, selectedForm } =
+      this.recoveryRowForms(element);
+
+    const value =
+      sideEffectKey === 'parcelas' ? tapValue : Number(element.parcelas);
+
+    if (!element.qtd) {
+      element.qtd = 1;
+      quantidadeForm?.setValue(1, { emitEvent: false });
+    }
+
+    if (typeof value === 'string' || typeof value === 'number') {
+      const quantidade = Number(quantidadeForm?.value);
+      const total = quantidade * +value;
+      const totalIsNaN = isNaN(total) ? 0 : total;
+      const subtotal = totalIsNaN.toFixed(2);
+      const periodoGroup = periodoForm?.value;
+
+      const isAutoSelected =
+        +subtotal > 0 &&
+        quantidade >= 1 &&
+        periodoGroup &&
+        periodoGroup?.startDate &&
+        periodoGroup?.endDate;
+
+      if (isAutoSelected) {
+        element.selected = true;
+        selectedForm?.setValue(true, { emitEvent: false });
+      }
+
+      if (typeof tapValue === 'boolean') {
+        element.selected = tapValue;
+        selectedForm?.setValue(tapValue, { emitEvent: false });
+      }
+      element.subtotal = subtotal;
+      subTotalForm?.setValue(subtotal, { emitEvent: false });
+    }
+  }
+
+  private recoveryRowForms(element: NgxTableData<TestUserRunTime>) {
+    const controls = [
+      'subtotal',
+      'qtd',
+      'periodo',
+      'selected',
+    ] as (keyof TestUserRunTime)[];
+
+    const [subTotalForm, quantidadeForm, periodoForm, selectedForm] =
+      controls.map((control) => {
+        const columnOption = this.getColumnOptionByProperty(control);
+        return this.getFormControl(columnOption, element);
+      });
+
+    return { subTotalForm, quantidadeForm, periodoForm, selectedForm };
+  }
+
+  getFormControlByColumnOptionProperty(
+    property: keyof TestUserRunTime,
+    element: NgxTableData<TestUserRunTime>
+  ) {
+    const columnOption = this.getColumnOptionByProperty(property);
+    return this.getFormControl(columnOption, element);
   }
 
   getFormControl(
     formColumnOptions: ColumnFormOptions<TestUser> | undefined,
     element: NgxTableData<TestUser>
   ) {
-    return formColumnOptions?.formColumn?.formControl?.controls[
+    if (!formColumnOptions?.formColumn?.formControlProperties?.controls)
+      return undefined;
+
+    return formColumnOptions?.formColumn?.formControlProperties?.controls[
       element.ngxCdkTableIndex
     ];
   }
 
-  getColumnOptionByProperty(
-    value: keyof TestUserRunTime,
-    key: keyof ColumnOptions<TestUserRunTime> = 'headerTitle'
-  ) {
+  getColumnOptionByProperty(value: keyof TestUserRunTime) {
     return this.editColumnOptions.find((columnOption) => {
       return (
         columnOption.cdkColumn === value ||
@@ -368,34 +162,36 @@ export class AppComponent {
   }
 
   tableEvents(tableEvent: TableEvent<TestUserRunTime>) {
-    if (tableEvent.event === 'delete') {
-      this.selectedDataSource = this.selectedDataSource.filter((user) => {
-        return (
-          (user as NgxTableData<TestUserRunTime>).ngxCdkTableIndex !==
-          tableEvent.element?.ngxCdkTableIndex
-        );
-      });
+    const { event, element } = tableEvent;
+
+    if (event === 'delete' && element) {
+      this.removeElementInSelectedTable(element);
     }
 
-    if (tableEvent.event === 'add') {
-      this.selectedDataSource.push(tableEvent.element!);
-
-      this.selectedDataSource = [
-        ...this.selectedDataSource.map((user) => {
-          user.editable = false;
-          return { ...user };
-        }),
-      ];
-
-      this.dataSource.forEach((user) => {
-        user.editable = true;
-      });
+    if (event === 'add' && element) {
+      this.addNewElementInSelectedTable(element);
     }
   }
 
-  writeWithDelay = (value: Function, timeout: number) => {
-    setTimeout(() => {
-      value();
-    }, timeout);
-  };
+  removeElementInSelectedTable(element: NgxTableData<TestUserRunTime>) {
+    this.selectedDataSource = this.selectedDataSource.filter((user) => {
+      const ngxTableData = user as NgxTableData<TestUserRunTime>;
+      const isNotSelected =
+        ngxTableData.ngxCdkTableIndex !== element.ngxCdkTableIndex;
+      return isNotSelected;
+    });
+  }
+
+  addNewElementInSelectedTable(element: NgxTableData<TestUserRunTime>) {
+    this.selectedDataSource.push(element);
+    this.selectedDataSource = [
+      ...this.selectedDataSource.map((user) => {
+        user.editable = false;
+        return { ...user };
+      }),
+    ];
+    this.dataSource.forEach((user) => {
+      user.editable = true;
+    });
+  }
 }

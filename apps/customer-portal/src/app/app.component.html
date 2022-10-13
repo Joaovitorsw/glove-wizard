@@ -7,6 +7,7 @@
 </ngx-cdk-table>
 
 <ngx-cdk-table
+  class="selection-table"
   *ngIf="selectedDataSource.length > 0; else noData"
   [dataSource]="selectedDataSource"
   [tableOptions]="tableOptions"

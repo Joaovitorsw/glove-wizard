@@ -1,18 +1,19 @@
-<div class="circle" *ngIf="canAdd(); else empty">
-  <mat-icon
-    [matTooltip]="getToolTipMessage()"
-    aria-label="Button that displays a tooltip when focused or hovered over"
-    class="{{ getActionIcon() }}"
-    (click)="emitEvent()"
-  >
-    {{ getActionIcon() }}
-  </mat-icon>
-</div>
-<ng-template #empty>
-  <mat-icon
-    matTooltip="Selecione um elemento informe uma parcela e uma quantidade para habilitar esta ação"
-    aria-label="Button that displays a tooltip when focused or hovered over"
-  >
-    info</mat-icon
-  >
-</ng-template>
+<ng-container>
+  <div class="circle" *ngIf="canAdd(); else empty" (click)="emitEvent()">
+    <mat-icon
+      [matTooltip]="getToolTipMessage()"
+      aria-label="Button that displays a tooltip when focused or hovered over"
+      class="{{ getActionIcon() }}"
+    >
+      {{ getActionIcon() }}
+    </mat-icon>
+  </div>
+  <ng-template #empty>
+    <mat-icon
+      matTooltip="Selecione um elemento informe uma parcela e uma quantidade para habilitar esta ação"
+      aria-label="Button that displays a tooltip when focused or hovered over"
+    >
+      info</mat-icon
+    >
+  </ng-template>
+</ng-container>

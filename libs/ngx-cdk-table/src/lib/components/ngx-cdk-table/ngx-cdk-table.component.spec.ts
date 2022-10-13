@@ -9,7 +9,7 @@ import {
   TestUser,
   WARNING_CLASS,
 } from '@glove-wizard/ngx-cdk-table';
-import { DEFAULT_PIPES_PROVIDERS } from '../../models/generic-pipe';
+import { DEFAULT_PIPES_PROVIDERS } from '../../models/interface/generic-pipe';
 import { CURRENCY_PIPE } from '../../tokens/generic-pipe.token';
 
 const THREE_COLUMNS_OPTIONS = [

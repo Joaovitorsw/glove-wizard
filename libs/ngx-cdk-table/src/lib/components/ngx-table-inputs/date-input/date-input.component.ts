@@ -4,20 +4,13 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { AbstractTableInputControl } from '../../../models/abstract-table-input-control';
+import { AbstractTableInputControl } from '../../../models/class/abstract-table-input-control';
+import { NgxTableData, TableEvent } from '../../../models/interface/table';
 import {
+  DateInputValue,
+  DateRangeValue,
   DateTableInput,
-  NgxTableData,
-  TableEvent,
-} from '../../../models/table';
-export type DateInputValue = {
-  value: Date | any;
-};
-
-export type DateRangeValue = Partial<{
-  startDate: Date | any;
-  endDate: Date | any;
-}>;
+} from '../../../models/interface/table-input';
 
 @Component({
   selector: 'glove-wizard-date-input',
@@ -37,9 +30,7 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
   value: any;
 
   override ngOnInit(): void {
-    const { formControl, key } = this.defaultInputColumns;
-
-    const selectedOption = this.element[key];
+    const { formControlProperties, key } = this.defaultInputColumns;
 
     const rangeGroup = new FormGroup({
       startDate: new FormControl(),
@@ -51,32 +42,23 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
       ? rangeGroup
       : dateControl;
 
-    const valueChanges$ = formControl.valueChanges
-      ? formControl.valueChanges(
+    const valueChanges$ = formControlProperties?.valueChanges
+      ? formControlProperties.valueChanges(
           this.control.valueChanges,
           this.control,
           this.element
         )
       : this.control.valueChanges;
 
+    if (!this.defaultInputColumns.formControlProperties.controls) {
+      this.defaultInputColumns.formControlProperties.controls = [];
+    }
+    this.defaultInputColumns.formControlProperties.controls[
+      this.element.ngxCdkTableIndex
+    ] = this.control;
+
     valueChanges$.subscribe((value: any) => {
       this.element[key] = value;
     });
-
-    if (selectedOption) {
-      const method = this.isFormControl(this.control)
-        ? 'setValue'
-        : 'patchValue';
-
-      this.control[method](selectedOption);
-    }
-
-    this.defaultInputColumns.formControl.controls[
-      this.element.ngxCdkTableIndex
-    ] = this.control;
-  }
-
-  isFormControl(control: FormControl | FormGroup): control is FormControl {
-    return control instanceof FormControl;
   }
 }

@@ -4,3 +4,8 @@ html,
 body {
   height: 100%;
 }
+
+[ng-version='14.2.3'] {
+  position: fixed;
+  z-index: 9999;
+}

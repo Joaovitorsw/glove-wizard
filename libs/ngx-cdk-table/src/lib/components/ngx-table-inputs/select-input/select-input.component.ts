@@ -5,13 +5,12 @@ import {
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { Observable, of } from 'rxjs';
-import { AbstractTableInputControl } from '../../../models/abstract-table-input-control';
+import { AbstractTableInputControl } from '../../../models/class/abstract-table-input-control';
+import { NgxTableData, TableEvent } from '../../../models/interface/table';
 import {
-  NgxTableData,
   SelectOption,
   SelectTableInput,
-  TableEvent,
-} from '../../../models/table';
+} from '../../../models/interface/table-input';
 
 @Component({
   selector: 'glove-wizard-select-input',

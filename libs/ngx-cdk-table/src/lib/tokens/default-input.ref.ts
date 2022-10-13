@@ -4,8 +4,7 @@ import { DateInputComponent } from '../components/ngx-table-inputs/date-input/da
 import { NumberInputComponent } from '../components/ngx-table-inputs/number-input/number-input.component';
 import { SelectInputComponent } from '../components/ngx-table-inputs/select-input/select-input.component';
 import { TextInputComponent } from '../components/ngx-table-inputs/text-input/text-input.component';
-
-import { TableInputComponent } from '../models/table';
+import { TableInputComponent } from '../models/interface/table';
 
 export const EXAMPLE_DEFAULT_INPUT_REF: DefaultInputTypeRef<any> = {
   text: TextInputComponent,

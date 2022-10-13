@@ -1,14 +1,15 @@
 <mat-form-field
   *ngIf="defaultInputColumns"
   appearance="outline"
-  [class.mat-form-field-readonly]="!!defaultInputColumns.readonly"
+  [class.mat-form-field-readonly]="
+    !!defaultInputColumns.formControlProperties.readonly
+  "
   [floatLabel]="defaultInputColumns.label?.floatLabel ?? 'always'"
 >
   <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
   <input
     [formControl]="control"
     matInput
-    [readonly]="!!defaultInputColumns.readonly"
-    [disabled]="!!defaultInputColumns.disabled"
+    [readonly]="!!defaultInputColumns.formControlProperties.readonly"
   />
 </mat-form-field>

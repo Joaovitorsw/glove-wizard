@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { CURRENCY_PIPE, DATE_PIPE } from '../tokens/generic-pipe.token';
+import { CURRENCY_PIPE, DATE_PIPE } from '../../tokens/generic-pipe.token';
 
 export type AvailablePipes = 'currency' | 'date';
 

@@ -12,35 +12,56 @@
   ngx-cdk-table {
     margin-bottom: 10px;
   }
-  .selected {
-    color: blue;
-    font-weight: bold;
-
-    & > * {
-      font-weight: bold;
+  :not(.selection-table) {
+    .selected {
       color: blue;
+      font-weight: bold;
+      transition: color 0.6s;
+
       & > * {
         font-weight: bold;
         color: blue;
+        transition: color 0.6s;
+
+        & > * {
+          font-weight: bold;
+          color: blue;
+          transition: color 0.6s;
+        }
       }
     }
   }
   ::ng-deep {
+    ngx-cdk-table:not(.selection-table) {
+      .selected {
+        transition: color 0.6s;
+        & > * {
+          transition: color 0.6s;
+
+          & > * {
+            transition: color 0.6s;
+          }
+        }
+      }
+    }
     table {
       width: 100%;
       border-collapse: collapse;
+      font-family: 'Open Sans', sans-serif;
 
       .selected {
+        color: blue;
         & > * {
           font-weight: bold;
           color: blue;
+
           & > * {
             font-weight: bold;
             color: blue;
           }
         }
       }
-
+      .cdk-column-fullname,
       .cdk-column-name,
       .cdk-column-surname {
         max-width: 50px;
@@ -97,6 +118,7 @@
         width: 100%;
       }
 
+      .cdk-column-fullname,
       .cdk-column-name,
       .cdk-column-surname {
         width: 43%;

@@ -7,12 +7,13 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-import { AbstractTableInputControl } from 'libs/ngx-cdk-table/src/lib/models/abstract-table-input-control';
+import { AbstractTableInputControl } from 'libs/ngx-cdk-table/src/lib/models/class/abstract-table-input-control';
 import {
   NgxTableData,
   TableEvent,
-  TextTableInput,
-} from 'libs/ngx-cdk-table/src/lib/models/table';
+} from 'libs/ngx-cdk-table/src/lib/models/interface/table';
+import { TextTableInput } from 'libs/ngx-cdk-table/src/lib/models/interface/table-input';
+
 @Component({
   selector: 'glove-wizard-desconto',
   standalone: true,

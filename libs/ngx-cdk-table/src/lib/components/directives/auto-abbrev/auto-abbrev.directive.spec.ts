@@ -3,17 +3,34 @@ import { screen } from '@testing-library/dom';
 import { NgxCdkTableModule } from '../../../ngx-cdk-table.module';
 import { AutoAbbrevDirective } from './auto-abbrev.directive';
 
+const maxWidthStyle = `width:50px;max-width: 50px;white-space: nowrap;`;
+
 const TEST_TEMPLATE = `
- <div style="width:120px;height:120px" data-testid="container-text">
-   <span style="width:120px;height:120px" gloveWizardAutoAbbrev class="text-overflow" data-testid="text-overflow">
-      <span style="width:220px;height:220px" class="text" data-testid="text">
-         Lorem ipsum dolor sit amet consectetur adipisicing elit. Totam
-         dolorem veniam ratione et rerum, animi nostrum aliquid in
-         repellat quis! Sapiente dolorum veniam officia labore iusto
-         nihil, vero dolor doloremque.
+<table style="width:100%">
+<tr style="height: 70px;">
+<th style="${maxWidthStyle};
+        overflow: hidden;">Test</th>
+<th style="width:100%">Test</th>
+<th style="width:100%">Test</th>
+</tr>
+  <tr style="height: 70px;">
+  <td style="${maxWidthStyle};overflow: hidden;">
+     <span style="${maxWidthStyle}" gloveWizardAutoAbbrev class="text-overflow" data-testid="text-overflow">
+       <span class="text" data-testid="text" >
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc vel
+        tincidunt lacinia.
        </span>
-   </span>
-  </div>
+     </span>
+   </td>
+    <td style="width:100%">
+     Test
+     </td>
+    <td style="width:100%">
+     Test
+     </td>
+  </tr>
+</table>
+
 `;
 
 describe('AutoAbbrevDirective', () => {

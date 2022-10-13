@@ -4,12 +4,9 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { AbstractTableInputControl } from '../../../models/abstract-table-input-control';
-import {
-  NgxTableData,
-  TableEvent,
-  TextTableInput,
-} from '../../../models/table';
+import { AbstractTableInputControl } from '../../../models/class/abstract-table-input-control';
+import { NgxTableData, TableEvent } from '../../../models/interface/table';
+import { TextTableInput } from '../../../models/interface/table-input';
 
 @Component({
   selector: 'glove-wizard-text-input',

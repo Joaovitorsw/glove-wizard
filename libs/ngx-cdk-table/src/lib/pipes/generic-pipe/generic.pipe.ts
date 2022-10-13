@@ -1,5 +1,5 @@
 import { InjectionToken, Injector, Pipe, PipeTransform } from '@angular/core';
-import { AvailablePipes } from '../../models/generic-pipe';
+import { AvailablePipes } from '../../models/interface/generic-pipe';
 
 @Pipe({
   name: 'genericPipe',

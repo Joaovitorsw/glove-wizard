@@ -3,7 +3,7 @@ import {
   NgxTableData,
   TableActionComponent,
   TableEvent,
-} from '../../models/table';
+} from '../../models/interface/table';
 
 @Component({
   selector: 'glove-wizard-ngx-action-cell',

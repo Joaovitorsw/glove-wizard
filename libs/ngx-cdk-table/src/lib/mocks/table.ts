@@ -1,11 +1,12 @@
 import { MatPaginator } from '@angular/material/paginator';
+import { ColumnOptions } from '../models/interface/column-options';
+import { TableOptions } from '../models/interface/table';
 import {
-  ColumnOptions,
   MatPaginatorProperties,
   NgxPaginatorProperties,
   NgxTableSortEvent,
-  TableOptions,
-} from '../models/table';
+} from '../models/interface/table-features';
+
 import { CURRENCY_PIPE } from '../tokens/generic-pipe.token';
 import { DATA } from './table-data';
 
@@ -23,6 +24,7 @@ export interface TestUserRunTime extends TestUser {
   subtotal?: string;
   editable?: boolean;
   periodo?: boolean;
+  fullname?: string;
 }
 
 const MAT_PAGINATOR_OPTIONS: MatPaginatorProperties = {
@@ -33,6 +35,7 @@ const MAT_PAGINATOR_OPTIONS: MatPaginatorProperties = {
   pageSizeOptions: [5],
   pageSize: 5,
   translate: (paginator: MatPaginator) => {
+    if (!paginator || !paginator._intl) return;
     paginator._intl.itemsPerPageLabel = 'Usuários por página :';
     paginator._intl.firstPageLabel = 'Primeira página';
     paginator._intl.lastPageLabel = 'Última página';
@@ -73,7 +76,7 @@ export const NGX_PAGINATOR_OPTIONS: NgxPaginatorProperties = {
   },
 };
 
-export const COLUMN_OPTIONS: ColumnOptions<TestUserRunTime>[] = [
+export const COLUMN_OPTIONS: ColumnOptions<TestUserRunTime> = [
   {
     headerTitle: 'Nome do usuário',
     cdkColumn: 'name',
@@ -118,7 +121,7 @@ export const COLUMN_OPTIONS: ColumnOptions<TestUserRunTime>[] = [
     },
     formColumn: {
       type: 'text',
-      formControl: {
+      formControlProperties: {
         controls: [],
       },
       key: 'qtd',

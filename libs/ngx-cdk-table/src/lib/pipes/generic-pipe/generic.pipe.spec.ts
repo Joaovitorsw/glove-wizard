@@ -1,6 +1,6 @@
 import { Injector } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { DEFAULT_PIPES_PROVIDERS } from '../../models/generic-pipe';
+import { DEFAULT_PIPES_PROVIDERS } from '../../models/interface/generic-pipe';
 import { CURRENCY_PIPE, DATE_PIPE } from '../../tokens/generic-pipe.token';
 import { GenericPipe } from './generic.pipe';
 

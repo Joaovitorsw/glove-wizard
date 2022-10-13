@@ -1,18 +1,33 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { TestUserRunTime } from '../../../mocks/table';
+import {
+  MOCK_DATA_SOURCE,
+  MOCK_HOME_COLUMN_OPTIONS,
+} from '../../../mocks/table-options';
+import { ColumnFormOptions } from '../../../models/interface/column-options';
+import { NumberTableInput } from '../../../models/interface/table-input';
+import { NgxCdkTableModule } from '../../../ngx-cdk-table.module';
 import { CheckboxInputComponent } from './checkbox-input.component';
 
 describe('CheckboxInputComponent', () => {
-  let component: CheckboxInputComponent;
-  let fixture: ComponentFixture<CheckboxInputComponent>;
+  let component: CheckboxInputComponent<TestUserRunTime>;
+  let fixture: ComponentFixture<CheckboxInputComponent<TestUserRunTime>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [NgxCdkTableModule],
       declarations: [CheckboxInputComponent],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(CheckboxInputComponent);
+    fixture = TestBed.createComponent<CheckboxInputComponent<TestUserRunTime>>(
+      CheckboxInputComponent
+    );
     component = fixture.componentInstance;
+    const FORM_COLUMN =
+      MOCK_HOME_COLUMN_OPTIONS[6] as ColumnFormOptions<TestUserRunTime>;
+    component.defaultInputColumns =
+      FORM_COLUMN.formColumn as NumberTableInput<TestUserRunTime>;
+    component.element = MOCK_DATA_SOURCE[0];
     fixture.detectChanges();
   });
 

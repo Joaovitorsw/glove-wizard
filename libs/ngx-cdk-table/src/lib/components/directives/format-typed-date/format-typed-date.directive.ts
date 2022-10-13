@@ -21,7 +21,8 @@ export class FormatTypedDateDirective implements OnInit {
       const indexFiveAndNotBackSpace =
         value.length === 5 && convertEventType.key !== 'Backspace';
 
-      const valueCanFormatted = value.length === 10 && !value.includes('/');
+      const valueCanFormatted =
+        (value.length === 10 && !value.includes('/')) || !value.includes('/');
 
       if (indexTwoAndNotBackSpace || indexFiveAndNotBackSpace) {
         element.value = `${value}/`;

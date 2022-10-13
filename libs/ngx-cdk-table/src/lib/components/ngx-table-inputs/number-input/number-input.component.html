@@ -5,8 +5,7 @@
 >
   <mat-label> {{ defaultInputColumns.label?.value }} </mat-label>
   <input
-    [disabled]="!!defaultInputColumns.disabled"
-    [readonly]="!!defaultInputColumns.readonly"
+    [readonly]="!!defaultInputColumns.formControlProperties.readonly"
     [formControl]="control"
     type="number"
     matInput
