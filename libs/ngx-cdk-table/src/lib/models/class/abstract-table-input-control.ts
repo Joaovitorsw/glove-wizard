@@ -48,13 +48,12 @@ export abstract class AbstractTableInputControl<T>
       this.element.ngxCdkTableIndex
     ] = this.control;
 
-    this.valueChanges$ = formControlProperties?.valueChanges
-      ? formControlProperties.valueChanges(
-          this.control.valueChanges,
-          this.control,
-          this.element
-        )
-      : this.control.valueChanges;
+    this.valueChanges$ =
+      formControlProperties.valueChanges?.(
+        this.control.valueChanges,
+        this.control,
+        this.element
+      ) ?? this.control.valueChanges;
 
     this.valueChanges$
       .pipe(distinctUntilChanged())

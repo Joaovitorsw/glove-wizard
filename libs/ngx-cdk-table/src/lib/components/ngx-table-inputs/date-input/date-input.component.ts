@@ -42,13 +42,12 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
       ? rangeGroup
       : dateControl;
 
-    const valueChanges$ = formControlProperties?.valueChanges
-      ? formControlProperties.valueChanges(
-          this.control.valueChanges,
-          this.control,
-          this.element
-        )
-      : this.control.valueChanges;
+    const valueChanges$ =
+      formControlProperties.valueChanges?.(
+        this.control.valueChanges,
+        this.control,
+        this.element
+      ) ?? this.control.valueChanges;
 
     if (!this.defaultInputColumns.formControlProperties.controls) {
       this.defaultInputColumns.formControlProperties.controls = [];

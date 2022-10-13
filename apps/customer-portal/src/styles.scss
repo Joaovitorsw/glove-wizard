@@ -5,7 +5,17 @@ body {
   height: 100%;
 }
 
-[ng-version='14.2.3'] {
-  position: fixed;
-  z-index: 9999;
+.pagination-next,
+.pagination-previous {
+  border: 1px solid;
+  border-radius: 5px !important;
+}
+.ngx-pagination .current {
+  background-color: blue !important;
+}
+.ngx-pagination .current,
+.ngx-pagination li,
+.ngx-pagination a,
+.ngx-pagination button {
+  border-radius: 5px !important;
 }
