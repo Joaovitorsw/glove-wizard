@@ -21,6 +21,7 @@ export interface TestUser {
 export interface TestUserRunTime extends TestUser {
   selected?: boolean;
   parcelas?: number;
+  desconto?: string;
   subtotal?: string;
   editable?: boolean;
   periodo?: boolean;
@@ -80,16 +81,12 @@ export const COLUMN_OPTIONS: ColumnOptions<TestUserRunTime> = [
   {
     headerTitle: 'Nome do usuário',
     cdkColumn: 'name',
-    setColumnClassFn: (element) => {
-      return element.currency < 3000 ? WARNING_CLASS : SUCCESS_CLASS;
-    },
+    setColumnClassFn: SET_COLUMN_CLASS_FN,
   },
   {
     headerTitle: 'Sobrenome do usuário',
     cdkColumn: 'surname',
-    setColumnClassFn: (element) => {
-      return element.currency < 3000 ? WARNING_CLASS : SUCCESS_CLASS;
-    },
+    setColumnClassFn: SET_COLUMN_CLASS_FN,
   },
   {
     headerTitle: 'Moeda do usuário',
@@ -102,9 +99,7 @@ export const COLUMN_OPTIONS: ColumnOptions<TestUserRunTime> = [
       type: CURRENCY_PIPE,
       args: 'BRL',
     },
-    setColumnClassFn: (element) => {
-      return element.currency < 3000 ? WARNING_CLASS : SUCCESS_CLASS;
-    },
+    setColumnClassFn: SET_COLUMN_CLASS_FN,
   },
   {
     headerTitle: 'Parcelas',

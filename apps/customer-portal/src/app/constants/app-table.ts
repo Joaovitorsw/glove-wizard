@@ -16,6 +16,7 @@ import {
 import { CURRENCY_PIPE } from 'libs/ngx-cdk-table/src/lib/tokens/generic-pipe.token';
 import { of } from 'rxjs';
 import { AppComponent } from '../app.component';
+import { DescontoComponent } from '../components/desconto/desconto.component';
 
 export const EDIT_TABLE_OPTIONS: TableOptions<TestUserRunTime> = {
   ...TABLE_OPTIONS,
@@ -173,10 +174,10 @@ export const CREATE_EDIT_TABLE_COLUMN_OPTIONS = (
           value: 'Quantidade',
         },
         options: of(
-          Array.from({ length: 9 }, (_, i) => {
+          Array.from({ length: 9 }, (_, index) => {
             return {
-              value: i + 1,
-              label: i + 1,
+              value: index + 1,
+              label: index + 1,
             };
           })
         ),
@@ -198,6 +199,18 @@ export const CREATE_EDIT_TABLE_COLUMN_OPTIONS = (
         formControlProperties: {
           readonly: true,
         },
+      },
+    },
+    {
+      headerTitle: 'Desconto',
+      cdkColumn: {
+        cellDef: 'desconto',
+        columnProperty: 'desconto',
+      },
+      formColumn: {
+        key: 'desconto',
+        type: 'custom',
+        componentRef: DescontoComponent,
       },
     },
     {

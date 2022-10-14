@@ -1,4 +1,5 @@
 <ngx-cdk-table
+  customer-portal-table
   [dataSource]="dataSource"
   [tableOptions]="editTableOptions"
   [columnOptions]="editColumnOptions"
@@ -7,7 +8,7 @@
 </ngx-cdk-table>
 
 <ngx-cdk-table
-  class="selection-table"
+  customer-portal-table
   *ngIf="selectedDataSource.length > 0; else noData"
   [dataSource]="selectedDataSource"
   [tableOptions]="tableOptions"

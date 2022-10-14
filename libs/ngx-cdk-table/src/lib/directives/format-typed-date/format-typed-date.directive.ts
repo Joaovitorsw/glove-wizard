@@ -21,21 +21,32 @@ export class FormatTypedDateDirective implements OnInit {
       const indexFiveAndNotBackSpace =
         value.length === 5 && convertEventType.key !== 'Backspace';
 
-      const valueCanFormatted =
-        (value.length === 10 && !value.includes('/')) || !value.includes('/');
-
       if (indexTwoAndNotBackSpace || indexFiveAndNotBackSpace) {
         element.value = `${value}/`;
+        return;
       }
 
       if (value.length > maxChar) {
+        const hasBar = value[5] === '/';
+
+        if (!hasBar) {
+          element.value =
+            value.slice(0, 5) + '/' + value.slice(5).substring(0, 4);
+          return;
+        }
+
         element.value = value.slice(0, maxChar);
       }
+
+      const valueCanFormatted =
+        (value.length >= 10 && !value.includes('/')) ||
+        (value.length === 8 && !value.includes('/'));
 
       if (valueCanFormatted) {
         const day = value.slice(0, 2);
         const month = value.slice(2, 4);
-        const year = value.slice(4, 10);
+        const year = value.slice(4, 10).substring(0, 4);
+
         element.value = `${day}/${month}/${year}`;
       }
     });

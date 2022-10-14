@@ -1,4 +1,15 @@
 <mat-form-field appearance="outline" floatLabel="always">
   <mat-label> Desconto </mat-label>
-  <input type="text" matInput />
+  <input
+    [formControl]="control"
+    type="text"
+    prefix="R$"
+    [mask]="'separator.2'"
+    [decimalMarker]="','"
+    [thousandSeparator]="'.'"
+    [separatorLimit]="'100000000'"
+    [dropSpecialCharacters]="false"
+    [validation]="false"
+    matInput
+  />
 </mat-form-field>

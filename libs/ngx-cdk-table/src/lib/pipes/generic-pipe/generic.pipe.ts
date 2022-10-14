@@ -12,7 +12,10 @@ export class GenericPipe implements PipeTransform {
     requiredPipe?: InjectionToken<AvailablePipes>,
     pipeArgs?: string[] | string | number | boolean | null
   ): unknown {
-    if (!requiredPipe) return value;
+    if (!requiredPipe) {
+      console.warn('No pipe provided');
+      return value;
+    }
 
     const pipe = this.injector.get<AvailablePipes & PipeTransform>(
       requiredPipe

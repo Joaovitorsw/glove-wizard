@@ -13,9 +13,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxPaginationModule } from 'ngx-pagination';
-import { AutoAbbrevDirective } from './components/directives/auto-abbrev/auto-abbrev.directive';
-import { FormatTypedDateDirective } from './components/directives/format-typed-date/format-typed-date.directive';
-import { ViewContainerRefDirective } from './components/directives/view-container-ref/view-container-ref.directive';
+
 import { NgxCdkTableComponent } from './components/ngx-cdk-table/ngx-cdk-table.component';
 import { CheckboxInputComponent } from './components/ngx-table-inputs/checkbox-input/checkbox-input.component';
 import { DateInputComponent } from './components/ngx-table-inputs/date-input/date-input.component';
@@ -27,6 +25,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { NgxActionCellComponent } from './components/ngx-action-cell/ngx-action-cell.component';
+import { AutoAbbrevDirective } from './directives/auto-abbrev/auto-abbrev.directive';
+import { FormatTypedDateDirective } from './directives/format-typed-date/format-typed-date.directive';
+import { ViewContainerRefDirective } from './directives/view-container-ref/view-container-ref.directive';
 import { DD_MM_YYY_BRAZILIAN_PICKER_PROVIDERS } from './helpers/date-helper';
 import { GenericPipe } from './pipes/generic-pipe/generic.pipe';
 

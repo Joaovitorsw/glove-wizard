@@ -109,6 +109,7 @@ export class AppComponent {
         element.selected = tapValue;
         selectedForm?.setValue(tapValue, { emitEvent: false });
       }
+
       element.subtotal = subtotal;
       subTotalForm?.setValue(subtotal, { emitEvent: false });
     }
@@ -141,7 +142,7 @@ export class AppComponent {
 
   getFormControl(
     formColumnOptions: ColumnFormOptions<TestUser> | undefined,
-    element: NgxTableData<TestUser>
+    element: NgxTableData<TestUserRunTime>
   ) {
     if (!formColumnOptions?.formColumn?.formControlProperties?.controls)
       return undefined;

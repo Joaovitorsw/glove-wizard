@@ -49,9 +49,12 @@ export class DateInputComponent<T> extends AbstractTableInputControl<T> {
         this.element
       ) ?? this.control.valueChanges;
 
-    if (!this.defaultInputColumns.formControlProperties.controls) {
-      this.defaultInputColumns.formControlProperties.controls = [];
-    }
+    this.defaultInputColumns.formControlProperties ??= {
+      controls: [],
+    };
+
+    this.defaultInputColumns.formControlProperties.controls ??= [];
+
     this.defaultInputColumns.formControlProperties.controls[
       this.element.ngxCdkTableIndex
     ] = this.control;

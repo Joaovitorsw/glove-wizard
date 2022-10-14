@@ -1,6 +1,6 @@
 import { EventEmitter, Injectable, OnInit } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { distinctUntilChanged } from 'rxjs';
+import { distinctUntilChanged, Observable } from 'rxjs';
 import {
   NgxTableData,
   TableEvent,
@@ -21,7 +21,7 @@ export abstract class AbstractTableInputControl<T>
   eventAction: EventEmitter<TableEvent<T>>;
 
   control: FormControl | FormGroup;
-  valueChanges$: any;
+  valueChanges$: Observable<any>;
 
   ngOnInit(): void {
     if (!this.defaultInputColumns) throw new Error('No input columns');
@@ -34,22 +34,18 @@ export abstract class AbstractTableInputControl<T>
     const formControlProperties =
       this.defaultInputColumns.formControlProperties;
 
-    if (!this.defaultInputColumns.formControlProperties) {
-      this.defaultInputColumns.formControlProperties = {
-        controls: [],
-      };
-    }
+    this.defaultInputColumns.formControlProperties ??= {
+      controls: [],
+    };
 
-    if (!this.defaultInputColumns.formControlProperties.controls) {
-      this.defaultInputColumns.formControlProperties.controls = [];
-    }
+    this.defaultInputColumns.formControlProperties.controls ??= [];
 
     this.defaultInputColumns.formControlProperties.controls[
       this.element.ngxCdkTableIndex
     ] = this.control;
 
     this.valueChanges$ =
-      formControlProperties.valueChanges?.(
+      formControlProperties?.valueChanges?.(
         this.control.valueChanges,
         this.control,
         this.element

@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/angular';
-import { NgxCdkTableModule } from '../../../ngx-cdk-table.module';
+import { NgxCdkTableModule } from '../../ngx-cdk-table.module';
 import { FormatTypedDateDirective } from './format-typed-date.directive';
 
 const TEST_TEMPLATE = `

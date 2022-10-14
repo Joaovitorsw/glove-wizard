@@ -174,32 +174,6 @@ export class NgxCdkTableComponent<T>
     }
   }
 
-  createActionComponent(
-    viewContainerRef: ViewContainerRef,
-    element: T,
-    columnOptions: ColumnAction<T>
-  ) {
-    const nativeElement = viewContainerRef.element
-      .nativeElement as HTMLDivElement;
-
-    const hasElement = viewContainerRef.length <= 0;
-
-    if (!hasElement || nativeElement?.tagName != 'DIV') return;
-
-    viewContainerRef.clear();
-
-    nativeElement.remove();
-
-    const { instance } = viewContainerRef.createComponent(
-      columnOptions.actionComponentRef
-    );
-
-    instance.element = element as NgxTableData<T>;
-    instance?.eventAction?.subscribe((element) =>
-      this.eventAction.emit(element)
-    );
-  }
-
   createInput(
     viewContainerRef: ViewContainerRef,
     element: T,
@@ -227,6 +201,32 @@ export class NgxCdkTableComponent<T>
     this.createCustomInputComponent(columnOptions, viewContainerRef, element);
   }
 
+  createActionComponent(
+    viewContainerRef: ViewContainerRef,
+    element: T,
+    columnOptions: ColumnAction<T>
+  ) {
+    const nativeElement = viewContainerRef.element
+      .nativeElement as HTMLDivElement;
+
+    const hasElement = viewContainerRef.length <= 0;
+
+    if (!hasElement || nativeElement?.tagName != 'DIV') return;
+
+    viewContainerRef.clear();
+
+    nativeElement.remove();
+
+    const { instance } = viewContainerRef.createComponent(
+      columnOptions.actionComponentRef
+    );
+
+    instance.element = element as NgxTableData<T>;
+    instance?.eventAction?.subscribe((element) =>
+      this.eventAction.emit(element)
+    );
+  }
+
   private createCustomInputComponent(
     columnOptions: ColumnFormOptions<T>,
     viewContainerRef: ViewContainerRef,
@@ -238,6 +238,9 @@ export class NgxCdkTableComponent<T>
       componentType.componentRef
     );
 
+    const formColumn = columnOptions.formColumn as DefaultInputTableType<T>;
+
+    instance.defaultInputColumns = formColumn;
     instance.element = element as NgxTableData<T>;
     instance?.eventAction?.subscribe((element) =>
       this.eventAction.emit(element)

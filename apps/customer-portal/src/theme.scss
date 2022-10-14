@@ -1,0 +1,125 @@
+.selected {
+  color: blue;
+  & > * {
+    font-weight: bold;
+    color: blue;
+
+    & > * {
+      font-weight: bold;
+      color: blue;
+    }
+  }
+}
+[customer-portal-table] {
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Open Sans', sans-serif;
+
+    .cdk-column-fullname,
+    .cdk-column-name,
+    .cdk-column-surname {
+      max-width: 50px;
+      overflow: hidden;
+    }
+    .cdk-column-selected {
+      width: unset;
+    }
+    .cdk-column-qtd,
+    .cdk-column-selected,
+    .cdk-column-id {
+      max-width: 100px;
+      text-align: center;
+    }
+
+    .cdk-column-id .mat-sort-header-container {
+      justify-content: center !important;
+      width: 100%;
+    }
+    &:not(th) {
+      .bold {
+        font-weight: bold;
+      }
+
+      .red {
+        color: red;
+      }
+      .green {
+        color: green;
+      }
+    }
+
+    th {
+      text-align: left;
+      padding: 5px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+
+    tr:not(.cdk-header-row):hover {
+      background-color: rgba(221, 221, 221, 0.411);
+    }
+
+    td,
+    th {
+      width: 100%;
+    }
+
+    .cdk-column-fullname,
+    .cdk-column-name,
+    .cdk-column-surname {
+      width: 43%;
+    }
+  }
+
+  .selected {
+    color: blue;
+    font-weight: bold;
+    transition: color 0.6s;
+
+    & > * {
+      font-weight: bold;
+      color: blue;
+      transition: color 0.6s;
+
+      & > * {
+        font-weight: bold;
+        color: blue;
+        transition: color 0.6s;
+      }
+    }
+  }
+  .pagination-next,
+  .pagination-previous {
+    border: 1px solid;
+    border-radius: 5px !important;
+  }
+  .ngx-pagination .current {
+    background-color: blue !important;
+  }
+  .ngx-pagination .current,
+  .ngx-pagination li,
+  .ngx-pagination a,
+  .ngx-pagination button {
+    border-radius: 5px !important;
+  }
+
+  .selected {
+    transition: color 0.6s;
+    & > * {
+      transition: color 0.6s;
+
+      & > * {
+        transition: color 0.6s;
+      }
+    }
+  }
+}

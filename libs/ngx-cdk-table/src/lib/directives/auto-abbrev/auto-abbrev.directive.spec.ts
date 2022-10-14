@@ -1,6 +1,6 @@
 import { render } from '@testing-library/angular';
 import { screen } from '@testing-library/dom';
-import { NgxCdkTableModule } from '../../../ngx-cdk-table.module';
+import { NgxCdkTableModule } from '../../ngx-cdk-table.module';
 import { AutoAbbrevDirective } from './auto-abbrev.directive';
 
 const maxWidthStyle = `width:50px;max-width: 50px;white-space: nowrap;`;
